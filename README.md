@@ -4,6 +4,11 @@
 
 **JJ WORLD**는 beautyrise.biz 홈페이지를 참고하여 제작된 모바일 중심 반응형 화장품 브랜드 홈페이지입니다. 관리자 모드를 통해 이미지와 비디오를 직접 업로드하고 관리할 수 있는 CMS 기능이 탑재되어 있습니다.
 
+## 🌐 URL
+
+- **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
+- **GitHub**: https://github.com/chrischef217/-jjworld-website
+
 ---
 
 ## ✨ 주요 기능
