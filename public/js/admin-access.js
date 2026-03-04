@@ -73,6 +73,7 @@ function initAdminAccess() {
         
         try {
             // Call JWT login API
+            console.log('Attempting login with password:', password);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -81,18 +82,22 @@ function initAdminAccess() {
                 body: JSON.stringify({ password })
             });
             
-            if (!response.ok) {
-                throw new Error('비밀번호가 올바르지 않습니다.');
-            }
-            
+            console.log('Login response status:', response.status);
             const data = await response.json();
+            console.log('Login response data:', data);
+            
+            if (!response.ok) {
+                throw new Error(data.error || '비밀번호가 올바르지 않습니다.');
+            }
             
             // Save JWT token to localStorage
             localStorage.setItem('admin_jwt_token', data.token);
+            console.log('Token saved to localStorage');
             
             // Redirect to admin page
             window.location.href = 'admin.html';
         } catch (error) {
+            console.error('Login error:', error);
             errorMessage.textContent = '⚠️ ' + error.message;
             errorMessage.style.display = 'block';
             adminPassword.value = '';
