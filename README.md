@@ -12,9 +12,9 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://98230fe3.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://b94db3a8.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://98230fe3.jjworld.pages.dev/admin
+- **관리자 페이지**: https://b94db3a8.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
@@ -25,12 +25,14 @@
 - localStorage 확인: `localStorage.getItem('admin_jwt_token')`
 
 **✅ 최근 업데이트**:
-- ✅ **다중 히어로 슬라이드쇼** 기능 추가
-  - 여러 개의 활성화된 히어로 이미지/비디오 자동 순환
-  - 빠르고 부드러운 페이드 인/아웃 전환 (0.8초)
-  - 4초마다 자동 전환 (매우 빠른 속도)
-  - 텍스트(제목/부제)도 미디어와 동기화되어 페이드 전환
-- ✅ 히어로 텍스트 스타일 대폭 개선 (beautyrise.biz 스타일 적용)
+- ✅ **AI 생성 히어로 이미지** 적용
+  - 모든 페이지에 전문적인 뷰티 스파 컨셉 이미지 적용
+  - ABOUT: 모던 미니멀 스파 인테리어
+  - BRANDS: 럭셔리 제품 디스플레이
+  - PR: 프로페셔널 프레스 이벤트
+  - CONTACT: 모던 오피스 리셉션
+  - FAQ: 편안한 컨설팅 룸
+- ✅ **다중 히어로 슬라이드쇼** 기능 추가 (빠른 페이드 전환)
 - ✅ 모든 페이지에 히어로 이미지 추가 (관리자 페이지에서 수정 가능)
 - ✅ ABOUT US 페이지에 서브메뉴 추가 (기업 스토리, 기업 연혁, CI, 사업 현황)
 - ✅ ABOUT US 페이지 리디자인 (beautyrise.biz 스타일 적용)
