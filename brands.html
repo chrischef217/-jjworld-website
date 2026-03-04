@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRANDS - JJ WORLD</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h1 class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="JJ WORLD">
+                </a>
+            </h1>
+            <nav class="gnb" id="gnb">
+                <ul class="gnb-list">
+                    <li class="gnb-item"><a href="about.html">ABOUT US</a></li>
+                    <li class="gnb-item"><a href="brands.html">BRANDS</a></li>
+                    <li class="gnb-item"><a href="pr.html">PR</a></li>
+                    <li class="gnb-item"><a href="contact.html">BUSINESS CONTACT</a></li>
+                    <li class="gnb-item"><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="content" style="margin-top: 70px; padding: 80px 20px;">
+        <div class="container">
+            <h2 class="section-title">BRANDS</h2>
+            <p class="section-subtitle">JJ WORLD의 프리미엄 브랜드를 만나보세요</p>
+            
+            <div id="brandsContainer" class="news-grid" style="margin-top: 60px;">
+                <!-- Dynamic content loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="JJ WORLD">
+            </div>
+            <div class="footer-copyright">
+                Copyright © 2025 JJ WORLD. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin-access.js"></script>
+    <script>
+        async function loadBrands() {
+            try {
+                const response = await fetch('tables/brands?sort=order');
+                const data = await response.json();
+                const container = document.getElementById('brandsContainer');
+                
+                if (data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(brand => `
+                        <div class="news-card">
+                            <img src="${brand.image_url}" alt="${brand.name}">
+                            <div class="news-card-content">
+                                <h3>${brand.name}</h3>
+                                <p>${brand.description}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading brands:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadBrands);
+    </script>
+</body>
+</html>

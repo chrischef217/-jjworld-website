@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUSINESS CONTACT - JJ WORLD</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h1 class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="JJ WORLD">
+                </a>
+            </h1>
+            <nav class="gnb" id="gnb">
+                <ul class="gnb-list">
+                    <li class="gnb-item"><a href="about.html">ABOUT US</a></li>
+                    <li class="gnb-item"><a href="brands.html">BRANDS</a></li>
+                    <li class="gnb-item"><a href="pr.html">PR</a></li>
+                    <li class="gnb-item"><a href="contact.html">BUSINESS CONTACT</a></li>
+                    <li class="gnb-item"><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="content" style="margin-top: 70px; padding: 80px 20px;">
+        <div class="container">
+            <h2 class="section-title">BUSINESS CONTACT</h2>
+            <p class="section-subtitle">궁금한 점을 문의하세요</p>
+            
+            <div style="max-width: 700px; margin: 60px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label>성함 *</label>
+                        <input type="text" required placeholder="이름을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label>이메일 *</label>
+                        <input type="email" required placeholder="example@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>전화번호</label>
+                        <input type="tel" placeholder="010-0000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label>문의 제목 *</label>
+                        <input type="text" required placeholder="문의 제목을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label>문의 내용 *</label>
+                        <textarea required placeholder="문의 내용을 입력하세요"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">문의하기</button>
+                </form>
+            </div>
+
+            <div id="map" style="margin-top: 60px;">
+                <h3 style="text-align: center; margin-bottom: 30px; font-size: 24px;">오시는 길</h3>
+                <div style="background: #f5f5f5; padding: 40px; border-radius: 10px; text-align: center;">
+                    <p style="font-size: 18px; margin-bottom: 10px; font-weight: 500;">주식회사 JJ WORLD</p>
+                    <p style="color: #666;">서울시 강남구 테헤란로 123</p>
+                    <p style="color: #666; margin-top: 20px;">Tel: 1577-0000</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="JJ WORLD">
+            </div>
+            <div class="footer-copyright">
+                Copyright © 2025 JJ WORLD. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin-access.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('문의가 접수되었습니다. 빠른 시일 내에 답변드리겠습니다.');
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABOUT US - JJ WORLD</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <h1 class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="JJ WORLD">
+                </a>
+            </h1>
+            <nav class="gnb" id="gnb">
+                <ul class="gnb-list">
+                    <li class="gnb-item"><a href="about.html">ABOUT US</a></li>
+                    <li class="gnb-item"><a href="brands.html">BRANDS</a></li>
+                    <li class="gnb-item"><a href="pr.html">PR</a></li>
+                    <li class="gnb-item"><a href="contact.html">BUSINESS CONTACT</a></li>
+                    <li class="gnb-item"><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="content" style="margin-top: 70px; padding: 80px 20px;">
+        <div class="container">
+            <h2 class="section-title">ABOUT US</h2>
+            <p class="section-subtitle">JJ WORLD의 이야기를 만나보세요</p>
+            
+            <div id="aboutStories" style="display: flex; flex-direction: column; gap: 60px; margin-top: 60px;">
+                <!-- Dynamic content loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="JJ WORLD">
+            </div>
+            <div class="footer-copyright">
+                Copyright © 2025 JJ WORLD. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin-access.js"></script>
+    <script>
+        async function loadAboutStories() {
+            try {
+                const response = await fetch('tables/about_story?sort=order');
+                const data = await response.json();
+                const container = document.getElementById('aboutStories');
+                
+                if (data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(story => `
+                        <div style="display: flex; flex-direction: column; gap: 30px;">
+                            <img src="${story.image_url}" alt="Story" style="width: 100%; max-width: 800px; margin: 0 auto; border-radius: 10px;">
+                            <div style="max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 16px; color: #666;">
+                                ${story.content.replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">준비 중입니다.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading about stories:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadAboutStories);
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "jjworld-website",
+  "version": "1.0.0",
+  "description": "JJ WORLD 화장품 브랜드 공식 홈페이지",
+  "main": "index.html",
+  "scripts": {
+    "deploy": "wrangler pages deploy .",
+    "dev": "wrangler pages dev ."
+  },
+  "keywords": ["jjworld", "cosmetics", "beauty", "cloudflare-pages"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJ WORLD - 화장품 브랜드</title>
+    <meta name="description" content="JJ WORLD 화장품 브랜드 공식 홈페이지">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Skip Navigation -->
+    <a href="#gnb" class="skip-nav">주 메뉴 바로가기</a>
+    <a href="#content" class="skip-nav">본문 바로가기</a>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <h1 class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="JJ WORLD">
+                </a>
+            </h1>
+            
+            <!-- Desktop Navigation -->
+            <nav class="gnb" id="gnb">
+                <ul class="gnb-list">
+                    <li class="gnb-item">
+                        <a href="about.html">ABOUT US</a>
+                        <ul class="gnb-sub">
+                            <li><a href="about.html#story">기업 스토리</a></li>
+                            <li><a href="about.html#history">기업 연혁</a></li>
+                            <li><a href="about.html#ci">CI</a></li>
+                            <li><a href="about.html#business">사업 현황</a></li>
+                        </ul>
+                    </li>
+                    <li class="gnb-item">
+                        <a href="brands.html">BRANDS</a>
+                    </li>
+                    <li class="gnb-item">
+                        <a href="pr.html">PR</a>
+                        <ul class="gnb-sub">
+                            <li><a href="pr.html">보도자료</a></li>
+                            <li><a href="pr.html#sns">SNS</a></li>
+                        </ul>
+                    </li>
+                    <li class="gnb-item">
+                        <a href="contact.html">BUSINESS CONTACT</a>
+                        <ul class="gnb-sub">
+                            <li><a href="contact.html">문의</a></li>
+                            <li><a href="contact.html#map">오시는 길</a></li>
+                        </ul>
+                    </li>
+                    <li class="gnb-item">
+                        <a href="faq.html">FAQ</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Language Toggle -->
+            <div class="lang-toggle">
+                <a href="#" class="lang-active">KOR</a>
+                <a href="#">ENG</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-header">
+            <img src="images/logo.png" alt="JJ WORLD">
+            <button class="mobile-nav-close" aria-label="메뉴 닫기">&times;</button>
+        </div>
+        <div class="mobile-lang">
+            <a href="#" class="lang-active">KOR</a>
+            <a href="#">ENG</a>
+        </div>
+        <nav class="mobile-nav-menu">
+            <ul>
+                <li>
+                    <a href="about.html">ABOUT US</a>
+                    <ul>
+                        <li><a href="about.html#story">기업 스토리</a></li>
+                        <li><a href="about.html#history">기업 연혁</a></li>
+                        <li><a href="about.html#ci">CI</a></li>
+                        <li><a href="about.html#business">사업 현황</a></li>
+                    </ul>
+                </li>
+                <li><a href="brands.html">BRANDS</a></li>
+                <li>
+                    <a href="pr.html">PR</a>
+                    <ul>
+                        <li><a href="pr.html">보도자료</a></li>
+                        <li><a href="pr.html#sns">SNS</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="contact.html">BUSINESS CONTACT</a>
+                    <ul>
+                        <li><a href="contact.html">문의</a></li>
+                        <li><a href="contact.html#map">오시는 길</a></li>
+                    </ul>
+                </li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main id="content">
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-media" id="heroMedia"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h2 class="hero-title" id="heroTitle">Rise your beauty life</h2>
+                <p class="hero-subtitle" id="heroSubtitle">아름다움이 당신의 삶을 바꿉니다</p>
+            </div>
+            <div class="scroll-indicator">
+                <span></span>
+            </div>
+        </section>
+
+        <!-- Brands Section -->
+        <section class="brands-section">
+            <div class="container">
+                <h2 class="section-title">BRANDS</h2>
+                <div class="brands-slider" id="brandsSlider">
+                    <!-- Dynamic content from database -->
+                </div>
+                <div class="slider-controls">
+                    <button class="slider-btn prev" aria-label="이전">&lt;</button>
+                    <button class="slider-btn next" aria-label="다음">&gt;</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Preview Section -->
+        <section class="about-preview">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1200" alt="JJ WORLD Building">
+            </div>
+            <div class="about-content">
+                <h3>뷰티 라이프의 시작</h3>
+                <p>JJ WORLD는 고객의 아름다움과 만족을 최우선으로 생각하며,<br>
+                최고의 품질과 혁신적인 제품을 제공합니다.</p>
+                <a href="about.html" class="btn-primary">자세히 보기</a>
+            </div>
+        </section>
+
+        <!-- PR/News Section -->
+        <section class="pr-section">
+            <div class="container">
+                <h2 class="section-title">PR</h2>
+                <p class="section-subtitle">고객의 피부 가치가 상승하는 모든 순간에<br>JJ WORLD는 함께 하겠습니다.</p>
+                <div class="news-grid" id="newsGrid">
+                    <!-- Dynamic content from database -->
+                </div>
+                <a href="pr.html" class="btn-secondary">더보기</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="JJ WORLD">
+            </div>
+            <div class="footer-info">
+                <div class="info-row">
+                    <span class="info-label">대표자</span>
+                    <span class="info-value">홍길동</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">연락처</span>
+                    <span class="info-value">1577-0000</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">주식회사 JJ WORLD</span>
+                    <span class="info-value">서울시 강남구 테헤란로 123</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">통신판매업 신고</span>
+                    <span class="info-value">2025-서울강남-00000</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">팩스</span>
+                    <span class="info-value">02-000-0000</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">개인정보보호책임자</span>
+                    <span class="info-value">홍길동(info@jjworld.com)</span>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                Copyright © 2025 JJ WORLD. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin-access.js"></script>
+</body>
+</html>

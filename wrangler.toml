@@ -1,0 +1,12 @@
+name = "jjworld"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
+
+# D1 Database binding (수동으로 연결 필요)
+# Cloudflare 대시보드에서 설정:
+# Settings → Functions → D1 database bindings
+# Variable name: DB
+# D1 database: jjworld-db
+
+[build]
+command = ""
