@@ -1,15 +1,33 @@
 // ========================================
-// File Upload Helper
+// File Upload Helper (with JWT authentication)
 // ========================================
 async function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
     
+    // Get JWT token from authManager (defined in auth.js)
+    const token = window.authManager ? window.authManager.getToken() : null;
+    
+    if (!token) {
+        throw new Error('인증이 필요합니다. 다시 로그인해주세요.');
+    }
+    
     try {
         const response = await fetch('/api/upload', {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
             body: formData
         });
+        
+        if (response.status === 401) {
+            // Token expired or invalid
+            if (window.authManager) {
+                window.authManager.clearToken();
+            }
+            throw new Error('세션이 만료되었습니다. 다시 로그인해주세요.');
+        }
         
         if (!response.ok) {
             const error = await response.json();
