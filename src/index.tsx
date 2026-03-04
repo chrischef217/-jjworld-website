@@ -1,18 +1,149 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { jwt, sign } from 'hono/jwt'
+import type { JwtVariables } from 'hono/jwt'
 
 type Bindings = {
   R2: R2Bucket;
   ASSETS: Fetcher;
+  JWT_SECRET?: string;
+  ADMIN_PASSWORD?: string;
 }
 
-const app = new Hono<{ Bindings: Bindings }>()
+type Variables = JwtVariables
+
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>()
+
+// JWT Secret (fallback to default for development)
+const getJWTSecret = (c: any) => c.env.JWT_SECRET || 'default-jwt-secret-change-in-production'
+const getAdminPassword = (c: any) => c.env.ADMIN_PASSWORD || '1111'
 
 // Enable CORS for all routes
 app.use('*', cors())
 
-// File upload endpoint
-app.post('/api/upload', async (c) => {
+// ========================================
+// Authentication Endpoints
+// ========================================
+
+// Login endpoint
+app.post('/api/auth/login', async (c) => {
+  try {
+    const { password } = await c.req.json()
+    
+    if (!password) {
+      return c.json({ error: 'Password is required' }, 400)
+    }
+
+    const adminPassword = getAdminPassword(c)
+    
+    if (password !== adminPassword) {
+      return c.json({ error: 'Invalid password' }, 401)
+    }
+
+    // Generate JWT token
+    const token = await sign(
+      {
+        sub: 'admin',
+        role: 'admin',
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 // 24 hours
+      },
+      getJWTSecret(c)
+    )
+
+    return c.json({
+      success: true,
+      token,
+      expiresIn: '24h'
+    })
+  } catch (error) {
+    console.error('Login error:', error)
+    return c.json({ error: 'Login failed' }, 500)
+  }
+})
+
+// Verify token endpoint
+app.get('/api/auth/verify', async (c) => {
+  const authHeader = c.req.header('Authorization')
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401)
+  }
+
+  const token = authHeader.substring(7)
+  
+  try {
+    const { verify } = await import('hono/jwt')
+    const payload = await verify(token, getJWTSecret(c))
+    
+    return c.json({ 
+      valid: true,
+      user: payload 
+    })
+  } catch (error) {
+    return c.json({ error: 'Invalid or expired token' }, 401)
+  }
+})
+
+// JWT Middleware for protected routes
+const jwtAuth = async (c: any, next: any) => {
+  const authHeader = c.req.header('Authorization')
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401)
+  }
+
+  const token = authHeader.substring(7)
+  
+  try {
+    const { sign: jwtSign, verify } = await import('hono/jwt')
+    const payload = await verify(token, getJWTSecret(c))
+    
+    c.set('jwtPayload', payload)
+    await next()
+  } catch (error) {
+    return c.json({ error: 'Invalid or expired token' }, 401)
+  }
+}
+
+// ========================================
+// Image Optimization Helper
+// ========================================
+
+async function optimizeImage(file: File): Promise<{ buffer: ArrayBuffer, type: string, extension: string }> {
+  // For now, we'll return the original file
+  // In production, you would use image processing libraries
+  const arrayBuffer = await file.arrayBuffer()
+  
+  // Determine optimal format
+  let outputType = file.type
+  let extension = file.name.split('.').pop() || 'jpg'
+  
+  // Convert JPEG/PNG to WebP for better compression (conceptual - needs actual implementation)
+  if (file.type === 'image/jpeg' || file.type === 'image/png') {
+    // In a real implementation, you would:
+    // 1. Decode the image
+    // 2. Resize if needed (e.g., max 1920px width)
+    // 3. Convert to WebP format
+    // 4. Compress with quality 85
+    
+    // For now, keep original format
+    // outputType = 'image/webp'
+    // extension = 'webp'
+  }
+  
+  return {
+    buffer: arrayBuffer,
+    type: outputType,
+    extension
+  }
+}
+
+// ========================================
+// Protected File Upload Endpoints
+// ========================================
+
+// File upload endpoint (JWT protected)
+app.post('/api/upload', jwtAuth, async (c) => {
   try {
     const formData = await c.req.formData()
     const file = formData.get('file') as File
@@ -32,13 +163,6 @@ app.post('/api/upload', async (c) => {
       return c.json({ error: 'Invalid file type. Only images (JPEG, PNG, GIF, WebP) and videos (MP4, WebM) are allowed' }, 400)
     }
 
-    // Generate unique filename
-    const timestamp = Date.now()
-    const randomStr = Math.random().toString(36).substring(7)
-    const extension = file.name.split('.').pop()
-    const filename = `${timestamp}-${randomStr}.${extension}`
-    const key = `uploads/${filename}`
-
     // Check if R2 is available
     if (!c.env.R2) {
       return c.json({ 
@@ -47,11 +171,37 @@ app.post('/api/upload', async (c) => {
       }, 503)
     }
 
-    // Upload to R2
-    const arrayBuffer = await file.arrayBuffer()
-    await c.env.R2.put(key, arrayBuffer, {
+    // Optimize image if applicable
+    let fileData
+    let contentType = file.type
+    let extension = file.name.split('.').pop()
+    
+    if (file.type.startsWith('image/') && file.type !== 'image/gif') {
+      // Optimize image (resize and/or convert)
+      const optimized = await optimizeImage(file)
+      fileData = optimized.buffer
+      contentType = optimized.type
+      extension = optimized.extension
+    } else {
+      // Use original file for videos and GIFs
+      fileData = await file.arrayBuffer()
+    }
+
+    // Generate unique filename
+    const timestamp = Date.now()
+    const randomStr = Math.random().toString(36).substring(7)
+    const filename = `${timestamp}-${randomStr}.${extension}`
+    const key = `uploads/${filename}`
+
+    // Upload to R2 with metadata
+    await c.env.R2.put(key, fileData, {
       httpMetadata: {
-        contentType: file.type
+        contentType
+      },
+      customMetadata: {
+        originalName: file.name,
+        originalSize: file.size.toString(),
+        uploadedAt: new Date().toISOString()
       }
     })
 
@@ -62,8 +212,10 @@ app.post('/api/upload', async (c) => {
       success: true,
       url,
       filename,
-      size: file.size,
-      type: file.type
+      size: fileData.byteLength,
+      originalSize: file.size,
+      type: contentType,
+      optimized: file.size !== fileData.byteLength
     })
   } catch (error) {
     console.error('Upload error:', error)
@@ -97,8 +249,8 @@ app.get('/api/files/*', async (c) => {
   }
 })
 
-// File deletion endpoint
-app.delete('/api/files/*', async (c) => {
+// File deletion endpoint (JWT protected)
+app.delete('/api/files/*', jwtAuth, async (c) => {
   try {
     const key = c.req.path.replace('/api/files/', '')
     await c.env.R2.delete(key)
@@ -110,8 +262,8 @@ app.delete('/api/files/*', async (c) => {
   }
 })
 
-// List uploaded files endpoint
-app.get('/api/files', async (c) => {
+// List uploaded files endpoint (JWT protected)
+app.get('/api/files', jwtAuth, async (c) => {
   try {
     const listed = await c.env.R2.list({ prefix: 'uploads/' })
     
