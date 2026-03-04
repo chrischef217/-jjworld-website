@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { jwt, sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import type { JwtVariables } from 'hono/jwt'
 
 type Bindings = {
@@ -47,7 +47,8 @@ app.post('/api/auth/login', async (c) => {
         role: 'admin',
         exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 // 24 hours
       },
-      getJWTSecret(c)
+      getJWTSecret(c),
+      'HS256'
     )
 
     return c.json({
@@ -72,14 +73,14 @@ app.get('/api/auth/verify', async (c) => {
   const token = authHeader.substring(7)
   
   try {
-    const { verify } = await import('hono/jwt')
-    const payload = await verify(token, getJWTSecret(c))
+    const payload = await verify(token, getJWTSecret(c), 'HS256')
     
     return c.json({ 
       valid: true,
       user: payload 
     })
   } catch (error) {
+    console.error('Token verification error:', error)
     return c.json({ error: 'Invalid or expired token' }, 401)
   }
 })
@@ -95,12 +96,12 @@ const jwtAuth = async (c: any, next: any) => {
   const token = authHeader.substring(7)
   
   try {
-    const { sign: jwtSign, verify } = await import('hono/jwt')
-    const payload = await verify(token, getJWTSecret(c))
+    const payload = await verify(token, getJWTSecret(c), 'HS256')
     
     c.set('jwtPayload', payload)
     await next()
   } catch (error) {
+    console.error('JWT auth error:', error)
     return c.json({ error: 'Invalid or expired token' }, 401)
   }
 }
