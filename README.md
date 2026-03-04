@@ -2,12 +2,17 @@
 
 ## 📋 프로젝트 개요
 
-**JJ WORLD**는 beautyrise.biz 홈페이지를 참고하여 제작된 모바일 중심 반응형 화장품 브랜드 홈페이지입니다. 관리자 모드를 통해 이미지와 비디오를 직접 업로드하고 관리할 수 있는 CMS 기능이 탑재되어 있습니다.
+**JJ WORLD**는 beautyrise.biz 홈페이지를 참고하여 제작된 모바일 중심 반응형 화장품 브랜드 홈페이지입니다. 관리자 모드를 통해 이미지와 비디오를 **직접 업로드**하고 관리할 수 있는 CMS 기능이 탑재되어 있습니다.
+
+**✨ 새로운 기능**: 이제 외부 URL뿐만 아니라 **로컬 파일을 직접 업로드**하여 사용할 수 있습니다!
 
 ## 🌐 URL
 
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
+- **관리자 페이지**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
+
+**관리자 비밀번호**: `1111`
 
 ---
 
@@ -29,14 +34,16 @@
 
 #### 🔧 관리자 모드
 - ✅ **비밀번호 인증 시스템** - 하단 푸터의 ⚙️ 아이콘으로 접근, 비밀번호: 1111
-- ✅ **히어로 콘텐츠 관리** - 이미지/비디오 URL 입력 및 텍스트 수정
-- ✅ **브랜드 관리** - 브랜드 추가, 수정, 삭제
-- ✅ **뉴스/PR 관리** - 보도자료 등록 및 관리
-- ✅ **About 스토리 관리** - 기업 스토리 콘텐츠 관리
+- ✅ **파일 직접 업로드** - 로컬 이미지/비디오 파일을 직접 업로드 (최대 10MB)
+- ✅ **히어로 콘텐츠 관리** - 이미지/비디오 업로드 또는 URL 입력 및 텍스트 수정
+- ✅ **브랜드 관리** - 브랜드 추가, 이미지 업로드, 순서 지정
+- ✅ **뉴스/PR 관리** - 보도자료 등록 및 썸네일 업로드
+- ✅ **About 스토리 관리** - 기업 스토리 콘텐츠 및 이미지 관리
 - ✅ **CRUD 기능** - 모든 콘텐츠에 대한 생성/조회/수정/삭제
 
-#### 💾 데이터베이스
-- ✅ RESTful Table API 연동
+#### 💾 데이터베이스 & 스토리지
+- ✅ **Cloudflare R2** - 이미지/비디오 파일 저장소
+- ✅ **RESTful Table API** 연동
 - ✅ 4개 테이블 스키마 정의
   - `hero_content` - 히어로 섹션
   - `brands` - 브랜드 정보
@@ -69,20 +76,30 @@
 ## 🗂️ 프로젝트 파일 구조
 
 ```
-jjworld/
-├── index.html              # 메인 홈페이지
-├── admin.html              # 관리자 페이지
-├── about.html              # About Us 페이지
-├── brands.html             # Brands 페이지
-├── pr.html                 # PR 페이지
-├── contact.html            # Contact 페이지
-├── faq.html                # FAQ 페이지
-├── css/
-│   └── style.css           # 메인 스타일시트 (반응형)
-├── js/
-│   ├── main.js             # 프론트엔드 JavaScript
-│   ├── admin.js            # 관리자 모드 JavaScript
-│   └── admin-access.js     # 관리자 접속 컴포넌트
+webapp/
+├── src/
+│   └── index.tsx           # Hono API 백엔드 (파일 업로드 처리)
+├── public/
+│   ├── index.html          # 메인 홈페이지
+│   ├── admin.html          # 관리자 페이지
+│   ├── about.html          # About Us 페이지
+│   ├── brands.html         # Brands 페이지
+│   ├── pr.html             # PR 페이지
+│   ├── contact.html        # Contact 페이지
+│   ├── faq.html            # FAQ 페이지
+│   ├── css/
+│   │   └── style.css       # 메인 스타일시트 (반응형)
+│   ├── js/
+│   │   ├── main.js         # 프론트엔드 JavaScript
+│   │   ├── admin.js        # 관리자 모드 JavaScript
+│   │   ├── admin-access.js # 관리자 접속 컴포넌트
+│   │   └── file-upload.js  # 파일 업로드 UI 및 로직
+│   └── images/
+│       └── logo.png        # 로고
+├── dist/                   # 빌드 결과물
+├── wrangler.jsonc          # Cloudflare 설정
+├── vite.config.ts          # Vite 빌드 설정
+├── package.json            # 의존성 관리
 └── README.md               # 프로젝트 문서
 ```
 
@@ -153,15 +170,26 @@ jjworld/
 
 #### 관리 기능
 각 섹션별 기능:
-   - **히어로 관리**: 메인 비주얼 이미지/비디오 URL 입력
-   - **브랜드 관리**: 브랜드 추가, 이미지 URL 입력, 순서 지정
-   - **뉴스 관리**: 보도자료 등록, 썸네일 이미지 URL 입력
-   - **About 관리**: 기업 스토리 작성, 이미지 URL 입력
+   - **히어로 관리**: 
+     - 파일 업로드: 로컬 이미지/비디오 선택 → "📤 파일 업로드" 버튼 클릭
+     - 또는 외부 URL 직접 입력
+     - 지원 포맷: JPEG, PNG, GIF, WebP (이미지), MP4, WebM (비디오)
+     - 최대 파일 크기: 10MB
+   - **브랜드 관리**: 브랜드 추가, 이미지 업로드 또는 URL 입력, 순서 지정
+   - **뉴스 관리**: 보도자료 등록, 썸네일 이미지 업로드 또는 URL 입력
+   - **About 관리**: 기업 스토리 작성, 이미지 업로드 또는 URL 입력
 
-#### 이미지/비디오 URL 예시
-- Unsplash: `https://images.unsplash.com/photo-xxxxx`
-- 직접 호스팅: `https://yoursite.com/images/photo.jpg`
-- YouTube (비디오): `https://www.youtube.com/embed/xxxxx`
+#### 이미지/비디오 업로드 방법
+1. **파일 업로드** (권장):
+   - 각 입력 필드 아래의 파일 선택 버튼 클릭
+   - 로컬 파일 선택 (최대 10MB)
+   - "📤 파일 업로드" 버튼 클릭
+   - 업로드 완료 후 자동으로 URL이 입력됨
+
+2. **URL 입력**:
+   - Unsplash: `https://images.unsplash.com/photo-xxxxx`
+   - 직접 호스팅: `https://yoursite.com/images/photo.jpg`
+   - YouTube (비디오): `https://www.youtube.com/embed/xxxxx`
 
 ---
 
@@ -187,8 +215,17 @@ jjworld/
 
 ---
 
-## 📱 RESTful API 엔드포인트
+## 📱 API 엔드포인트
 
+### 파일 업로드 API
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| POST | `/api/upload` | 파일 업로드 (최대 10MB) |
+| GET | `/api/files/{key}` | 업로드된 파일 조회 |
+| DELETE | `/api/files/{key}` | 파일 삭제 |
+| GET | `/api/files` | 업로드된 파일 목록 조회 |
+
+### RESTful Table API
 관리자 모드에서 사용하는 API:
 
 | Method | Endpoint | 설명 |
@@ -206,27 +243,30 @@ jjworld/
 
 ### 미구현 기능
 - [ ] 다국어 지원 (한국어/영어 전환)
-- [ ] 이미지 파일 직접 업로드 (현재는 URL만 지원)
 - [ ] 제품 상세 페이지
 - [ ] 검색 기능
 - [ ] 회원가입/로그인
 - [ ] 온라인 쇼핑몰 통합
 
 ### 추천 개선 사항
-1. **이미지 최적화**: CDN 사용 및 WebP 포맷 적용
+1. **이미지 최적화**: WebP 포맷 자동 변환 및 리사이징
 2. **SEO 최적화**: 메타 태그 및 구조화된 데이터 추가
 3. **성능 개선**: Lazy loading 구현
-4. **보안 강화**: 관리자 인증 시스템 추가
+4. **보안 강화**: 관리자 JWT 인증 시스템 추가
 5. **애널리틱스**: Google Analytics 또는 유사 도구 연동
+6. **파일 관리**: 업로드된 파일 목록 관리 UI 추가
 
 ---
 
 ## 🛠️ 기술 스택
 
+- **Backend**: Hono (Cloudflare Workers)
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Design**: Mobile-First Responsive Design
+- **Storage**: Cloudflare R2 (파일 저장)
 - **Database**: RESTful Table API
-- **Asset Storage**: External URL (Unsplash, CDN 등)
+- **Build Tool**: Vite
+- **Deployment**: Cloudflare Pages
 
 ---
 
@@ -249,7 +289,50 @@ Copyright © 2025 JJ WORLD. All rights reserved.
 ## 🎯 참고사항
 
 - 본 프로젝트는 beautyrise.biz 홈페이지의 구조와 레이아웃을 참고하여 제작되었습니다
-- 모든 이미지와 비디오는 외부 URL로 관리됩니다 (직접 업로드 기능 없음)
+- **파일 업로드 기능**: Cloudflare R2를 사용하여 이미지와 비디오를 저장합니다
+- **프로덕션 배포시**: Cloudflare Pages에서 R2 버킷을 바인딩해야 파일 업로드가 작동합니다
+- **로컬 개발**: R2 바인딩 설정 필요 (wrangler.jsonc에 설정됨)
 - **관리자 접속**: 모든 페이지 하단 푸터의 ⚙️ 아이콘 클릭 → 비밀번호 `1111` 입력
 - 관리자 페이지는 기본 비밀번호로 보호되며, 실제 운영시 보안 강화 권장
 - 모바일 최적화를 최우선으로 설계되었습니다
+
+## 🚀 배포 가이드
+
+### Cloudflare Pages 배포
+
+1. **R2 버킷 생성**:
+```bash
+npx wrangler r2 bucket create jjworld-media
+```
+
+2. **프로젝트 빌드**:
+```bash
+npm run build
+```
+
+3. **Cloudflare Pages 배포**:
+```bash
+npx wrangler pages deploy dist --project-name jjworld
+```
+
+4. **R2 바인딩 설정**:
+   - Cloudflare 대시보드 → Pages → jjworld 프로젝트
+   - Settings → Functions → R2 bucket bindings
+   - Variable name: `R2`
+   - R2 bucket: `jjworld-media`
+
+### 로컬 개발
+
+```bash
+# 의존성 설치
+npm install
+
+# 빌드
+npm run build
+
+# 개발 서버 시작 (PM2)
+pm2 start ecosystem.config.cjs
+
+# 또는 직접 실행
+npm run dev:sandbox
+```
