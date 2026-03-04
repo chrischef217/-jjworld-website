@@ -278,11 +278,11 @@
 
     <nav class="admin-nav">
         <ul>
-            <li><button class="nav-btn active" data-section="hero">히어로 관리</button></li>
+            <li><button class="nav-btn active" data-section="hero">메인 히어로</button></li>
+            <li><button class="nav-btn" data-section="pagehero">📷 페이지 히어로</button></li>
             <li><button class="nav-btn" data-section="brands">브랜드 관리</button></li>
             <li><button class="nav-btn" data-section="news">뉴스/PR 관리</button></li>
             <li><button class="nav-btn" data-section="about">About 스토리</button></li>
-            <li><button class="nav-btn" data-section="pagehero">📷 페이지 히어로</button></li>
             <li><button class="nav-btn" data-section="files">📁 파일 관리</button></li>
         </ul>
     </nav>
@@ -479,21 +479,87 @@
             <h2 class="section-title">페이지 히어로 이미지 관리</h2>
             <p style="color: #666; margin-bottom: 30px;">각 페이지의 히어로 이미지와 텍스트를 관리합니다.</p>
             
-            <div class="data-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>페이지</th>
-                            <th>이미지</th>
-                            <th>제목</th>
-                            <th>부제목</th>
-                            <th>작업</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pageHeroList">
-                        <!-- Dynamic content loaded here -->
-                    </tbody>
-                </table>
+            <!-- Sub Navigation for Pages -->
+            <nav class="page-hero-subnav" style="margin-bottom: 40px; background: #f5f5f5; border-radius: 8px; padding: 10px;">
+                <ul style="display: flex; gap: 10px; justify-content: flex-start; flex-wrap: wrap; list-style: none; margin: 0; padding: 0;">
+                    <li style="flex: 1; min-width: 150px;">
+                        <button class="page-nav-btn active" data-page="about" style="width: 100%; padding: 12px 20px; background: #2c2855; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s;">
+                            📖 ABOUT US
+                        </button>
+                    </li>
+                    <li style="flex: 1; min-width: 150px;">
+                        <button class="page-nav-btn" data-page="brands" style="width: 100%; padding: 12px 20px; background: white; color: #333; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s;">
+                            ✨ BRANDS
+                        </button>
+                    </li>
+                    <li style="flex: 1; min-width: 150px;">
+                        <button class="page-nav-btn" data-page="pr" style="width: 100%; padding: 12px 20px; background: white; color: #333; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s;">
+                            📰 PR
+                        </button>
+                    </li>
+                    <li style="flex: 1; min-width: 150px;">
+                        <button class="page-nav-btn" data-page="contact" style="width: 100%; padding: 12px 20px; background: white; color: #333; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s;">
+                            💼 CONTACT
+                        </button>
+                    </li>
+                    <li style="flex: 1; min-width: 150px;">
+                        <button class="page-nav-btn" data-page="faq" style="width: 100%; padding: 12px 20px; background: white; color: #333; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s;">
+                            ❓ FAQ
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            
+            <style>
+                .page-nav-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                }
+                .page-nav-btn.active {
+                    background: #2c2855 !important;
+                    color: white !important;
+                    border-color: #2c2855 !important;
+                    box-shadow: 0 4px 12px rgba(44, 40, 85, 0.3);
+                }
+            </style>
+            
+            <!-- Page Hero Form -->
+            <div id="pageHeroForm">
+                <form id="heroPageForm">
+                    <input type="hidden" id="currentPageName" value="about">
+                    
+                    <div class="form-group">
+                        <label>히어로 이미지 URL</label>
+                        <input type="url" id="pageHeroImageUrl" placeholder="https://example.com/hero.jpg" required>
+                        <small>* 이미지 URL을 입력하거나 아래에서 파일을 업로드하세요</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>제목</label>
+                        <input type="text" id="pageHeroTitle" placeholder="예: ABOUT US" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>부제목</label>
+                        <input type="text" id="pageHeroSubtitle" placeholder="예: JJ WORLD를 소개합니다">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button type="button" class="btn btn-secondary" id="pageHeroReset">취소</button>
+                    </div>
+                </form>
+                
+                <!-- Preview -->
+                <div style="margin-top: 40px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px; color: #666;">미리보기</h3>
+                    <div id="pageHeroPreview" style="position: relative; min-height: 200px; background-size: cover; background-position: center; border-radius: 8px; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(44, 40, 85, 0.85) 0%, rgba(74, 65, 120, 0.85) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 40px;">
+                            <h1 id="previewTitle" style="font-size: 36px; margin-bottom: 10px;">ABOUT US</h1>
+                            <p id="previewSubtitle" style="font-size: 16px; opacity: 0.9;">JJ WORLD를 소개합니다</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>

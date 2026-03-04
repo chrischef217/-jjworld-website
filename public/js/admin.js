@@ -412,68 +412,123 @@ async function deleteRecord(table, id) {
 // ========================================
 // Page Hero Management
 // ========================================
-async function loadPageHeroList() {
+let currentPageHeroData = {};
+
+// Page hero sub-tab navigation
+document.addEventListener('DOMContentLoaded', () => {
+    const pageButtons = document.querySelectorAll('.page-nav-btn[data-page]');
+    pageButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pageName = btn.dataset.page;
+            
+            // Update active tab styling
+            pageButtons.forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'white';
+                b.style.color = '#333';
+                b.style.borderColor = '#e0e0e0';
+            });
+            btn.classList.add('active');
+            btn.style.background = '#2c2855';
+            btn.style.color = 'white';
+            btn.style.borderColor = '#2c2855';
+            
+            // Load page hero data
+            loadPageHeroData(pageName);
+        });
+    });
+    
+    // Load initial page (about)
+    loadPageHeroData('about');
+});
+
+async function loadPageHeroData(pageName) {
     try {
         const data = await fetchRecords('page_hero_images');
-        const tbody = document.getElementById('pageHeroList');
+        const pageHero = data.find(item => item.page_name === pageName);
         
-        const pageNames = {
-            'about': 'ABOUT US',
-            'brands': 'BRANDS',
-            'pr': 'NEWS & PR',
-            'contact': 'BUSINESS CONTACT',
-            'faq': 'FAQ'
-        };
-        
-        tbody.innerHTML = data.map(item => `
-            <tr>
-                <td><strong>${pageNames[item.page_name] || item.page_name}</strong></td>
-                <td><img src="${item.image_url}" alt="${item.page_name}" style="max-width: 150px; border-radius: 4px;"></td>
-                <td>${item.title || '-'}</td>
-                <td>${item.subtitle || '-'}</td>
-                <td class="table-actions">
-                    <button class="btn btn-secondary" onclick="editPageHero('${item.id}')">수정</button>
-                </td>
-            </tr>
-        `).join('');
+        if (pageHero) {
+            currentPageHeroData = pageHero;
+            
+            // Fill form
+            document.getElementById('currentPageName').value = pageName;
+            document.getElementById('pageHeroImageUrl').value = pageHero.image_url || '';
+            document.getElementById('pageHeroTitle').value = pageHero.title || '';
+            document.getElementById('pageHeroSubtitle').value = pageHero.subtitle || '';
+            
+            // Update preview
+            updatePageHeroPreview();
+        }
     } catch (error) {
         showAlert('데이터 로드 실패: ' + error.message, 'error');
     }
 }
 
-async function editPageHero(id) {
-    try {
-        const record = await fetchRecord('page_hero_images', id);
-        
-        const pageNames = {
-            'about': 'ABOUT US',
-            'brands': 'BRANDS',
-            'pr': 'NEWS & PR',
-            'contact': 'BUSINESS CONTACT',
-            'faq': 'FAQ'
-        };
-        
-        const pageName = pageNames[record.page_name] || record.page_name;
-        const imageUrl = prompt(`[${pageName}] 히어로 이미지 URL을 입력하세요:`, record.image_url);
-        if (imageUrl === null) return;
-        
-        const title = prompt(`[${pageName}] 제목을 입력하세요:`, record.title || '');
-        if (title === null) return;
-        
-        const subtitle = prompt(`[${pageName}] 부제목을 입력하세요:`, record.subtitle || '');
-        if (subtitle === null) return;
-        
-        await updateRecord('page_hero_images', id, {
-            image_url: imageUrl,
-            title: title,
-            subtitle: subtitle
-        });
-        
-        showAlert('페이지 히어로가 수정되었습니다.');
-        loadPageHeroList();
-    } catch (error) {
-        showAlert('수정 실패: ' + error.message, 'error');
+function updatePageHeroPreview() {
+    const imageUrl = document.getElementById('pageHeroImageUrl').value;
+    const title = document.getElementById('pageHeroTitle').value;
+    const subtitle = document.getElementById('pageHeroSubtitle').value;
+    
+    const preview = document.getElementById('pageHeroPreview');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewSubtitle = document.getElementById('previewSubtitle');
+    
+    if (imageUrl) {
+        preview.style.backgroundImage = `url('${imageUrl}')`;
     }
+    previewTitle.textContent = title || 'ABOUT US';
+    previewSubtitle.textContent = subtitle || 'JJ WORLD를 소개합니다';
+}
+
+// Listen to input changes for preview
+document.addEventListener('DOMContentLoaded', () => {
+    const imageInput = document.getElementById('pageHeroImageUrl');
+    const titleInput = document.getElementById('pageHeroTitle');
+    const subtitleInput = document.getElementById('pageHeroSubtitle');
+    
+    if (imageInput) imageInput.addEventListener('input', updatePageHeroPreview);
+    if (titleInput) titleInput.addEventListener('input', updatePageHeroPreview);
+    if (subtitleInput) subtitleInput.addEventListener('input', updatePageHeroPreview);
+});
+
+// Page hero form submission
+const heroPageForm = document.getElementById('heroPageForm');
+if (heroPageForm) {
+    heroPageForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const pageName = document.getElementById('currentPageName').value;
+        const imageUrl = document.getElementById('pageHeroImageUrl').value;
+        const title = document.getElementById('pageHeroTitle').value;
+        const subtitle = document.getElementById('pageHeroSubtitle').value;
+        
+        try {
+            if (currentPageHeroData.id) {
+                await updateRecord('page_hero_images', currentPageHeroData.id, {
+                    image_url: imageUrl,
+                    title: title,
+                    subtitle: subtitle
+                });
+                showAlert('페이지 히어로가 수정되었습니다.');
+            }
+        } catch (error) {
+            showAlert('저장 실패: ' + error.message, 'error');
+        }
+    });
+}
+
+// Reset button
+const pageHeroReset = document.getElementById('pageHeroReset');
+if (pageHeroReset) {
+    pageHeroReset.addEventListener('click', () => {
+        const pageName = document.getElementById('currentPageName').value;
+        loadPageHeroData(pageName);
+    });
+}
+
+async function loadPageHeroList() {
+    // Load first page (about) by default
+    loadPageHeroData('about');
 }
 
 // ========================================
