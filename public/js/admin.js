@@ -410,6 +410,73 @@ async function deleteRecord(table, id) {
 }
 
 // ========================================
+// Page Hero Management
+// ========================================
+async function loadPageHeroList() {
+    try {
+        const data = await fetchRecords('page_hero_images');
+        const tbody = document.getElementById('pageHeroList');
+        
+        const pageNames = {
+            'about': 'ABOUT US',
+            'brands': 'BRANDS',
+            'pr': 'NEWS & PR',
+            'contact': 'BUSINESS CONTACT',
+            'faq': 'FAQ'
+        };
+        
+        tbody.innerHTML = data.map(item => `
+            <tr>
+                <td><strong>${pageNames[item.page_name] || item.page_name}</strong></td>
+                <td><img src="${item.image_url}" alt="${item.page_name}" style="max-width: 150px; border-radius: 4px;"></td>
+                <td>${item.title || '-'}</td>
+                <td>${item.subtitle || '-'}</td>
+                <td class="table-actions">
+                    <button class="btn btn-secondary" onclick="editPageHero('${item.id}')">수정</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        showAlert('데이터 로드 실패: ' + error.message, 'error');
+    }
+}
+
+async function editPageHero(id) {
+    try {
+        const record = await fetchRecord('page_hero_images', id);
+        
+        const pageNames = {
+            'about': 'ABOUT US',
+            'brands': 'BRANDS',
+            'pr': 'NEWS & PR',
+            'contact': 'BUSINESS CONTACT',
+            'faq': 'FAQ'
+        };
+        
+        const pageName = pageNames[record.page_name] || record.page_name;
+        const imageUrl = prompt(`[${pageName}] 히어로 이미지 URL을 입력하세요:`, record.image_url);
+        if (imageUrl === null) return;
+        
+        const title = prompt(`[${pageName}] 제목을 입력하세요:`, record.title || '');
+        if (title === null) return;
+        
+        const subtitle = prompt(`[${pageName}] 부제목을 입력하세요:`, record.subtitle || '');
+        if (subtitle === null) return;
+        
+        await updateRecord('page_hero_images', id, {
+            image_url: imageUrl,
+            title: title,
+            subtitle: subtitle
+        });
+        
+        showAlert('페이지 히어로가 수정되었습니다.');
+        loadPageHeroList();
+    } catch (error) {
+        showAlert('수정 실패: ' + error.message, 'error');
+    }
+}
+
+// ========================================
 // Load Section Data
 // ========================================
 function loadSectionData(section) {
@@ -425,6 +492,9 @@ function loadSectionData(section) {
             break;
         case 'about':
             loadAboutList();
+            break;
+        case 'pagehero':
+            loadPageHeroList();
             break;
     }
 }

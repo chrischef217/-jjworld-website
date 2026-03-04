@@ -282,6 +282,7 @@
             <li><button class="nav-btn" data-section="brands">브랜드 관리</button></li>
             <li><button class="nav-btn" data-section="news">뉴스/PR 관리</button></li>
             <li><button class="nav-btn" data-section="about">About 스토리</button></li>
+            <li><button class="nav-btn" data-section="pagehero">📷 페이지 히어로</button></li>
             <li><button class="nav-btn" data-section="files">📁 파일 관리</button></li>
         </ul>
     </nav>
@@ -470,6 +471,29 @@
                 <div style="font-size: 48px; margin-bottom: 15px;">📂</div>
                 <p style="font-size: 16px; margin: 0;">업로드된 파일이 없습니다.</p>
                 <p style="font-size: 14px; margin-top: 10px;">다른 섹션에서 파일을 업로드해보세요!</p>
+            </div>
+        </section>
+
+        <!-- Page Hero Images Section -->
+        <section class="admin-section" id="pagehero-section">
+            <h2 class="section-title">페이지 히어로 이미지 관리</h2>
+            <p style="color: #666; margin-bottom: 30px;">각 페이지의 히어로 이미지와 텍스트를 관리합니다.</p>
+            
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>페이지</th>
+                            <th>이미지</th>
+                            <th>제목</th>
+                            <th>부제목</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pageHeroList">
+                        <!-- Dynamic content loaded here -->
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>

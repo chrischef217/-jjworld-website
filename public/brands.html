@@ -5,6 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRANDS - JJ WORLD</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .page-hero {
+            text-align: center;
+            padding: 200px 20px 80px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            margin-top: 70px;
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(44, 40, 85, 0.85) 0%, rgba(74, 65, 120, 0.85) 100%);
+            z-index: 1;
+        }
+        
+        .page-hero > * {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .page-hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .page-hero p {
+            font-size: 20px;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .page-hero {
+                padding: 150px 20px 60px;
+            }
+            
+            .page-hero h1 {
+                font-size: 36px;
+            }
+            
+            .page-hero p {
+                font-size: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -29,13 +88,17 @@
         </div>
     </header>
 
-    <main id="content" style="margin-top: 70px; padding: 80px 20px;">
-        <div class="container">
-            <h2 class="section-title">BRANDS</h2>
-            <p class="section-subtitle">JJ WORLD의 프리미엄 브랜드를 만나보세요</p>
-            
-            <div id="brandsContainer" class="news-grid" style="margin-top: 60px;">
-                <!-- Dynamic content loaded here -->
+    <main id="content">
+        <div class="page-hero">
+            <h1>BRANDS</h1>
+            <p>프리미엄 뷰티 브랜드</p>
+        </div>
+        
+        <div style="padding: 80px 20px;">
+            <div class="container">
+                <div id="brandsContainer" class="news-grid">
+                    <!-- Dynamic content loaded here -->
+                </div>
             </div>
         </div>
     </main>
@@ -54,6 +117,30 @@
     <script src="js/main.js"></script>
     <script src="js/admin-access.js"></script>
     <script>
+        async function loadHeroImage() {
+            try {
+                const response = await fetch('/tables/page_hero_images');
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const hero = data.data.find(item => item.page_name === 'brands');
+                    if (hero) {
+                        const heroElement = document.querySelector('.page-hero');
+                        heroElement.style.backgroundImage = `url('${hero.image_url}')`;
+                        
+                        if (hero.title) {
+                            document.querySelector('.page-hero h1').textContent = hero.title;
+                        }
+                        if (hero.subtitle) {
+                            document.querySelector('.page-hero p').textContent = hero.subtitle;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading hero image:', error);
+            }
+        }
+        
         async function loadBrands() {
             try {
                 const response = await fetch('tables/brands?sort=order');
@@ -70,13 +157,20 @@
                             </div>
                         </div>
                     `).join('');
+                } else {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">준비 중입니다.</p>';
                 }
             } catch (error) {
                 console.error('Error loading brands:', error);
             }
         }
         
-        document.addEventListener('DOMContentLoaded', loadBrands);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeroImage();
+            loadBrands();
+        });
     </script>
+</body>
+</html>
 </body>
 </html>

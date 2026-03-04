@@ -8,10 +8,30 @@
     <style>
         .about-hero {
             text-align: center;
-            padding: 100px 20px 40px;
-            background: linear-gradient(135deg, #2c2855 0%, #4a4178 100%);
+            padding: 200px 20px 40px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             color: white;
             margin-top: 70px;
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(44, 40, 85, 0.85) 0%, rgba(74, 65, 120, 0.85) 100%);
+            z-index: 1;
+        }
+        
+        .about-hero > * {
+            position: relative;
+            z-index: 2;
         }
         
         .about-hero h1 {
@@ -308,7 +328,35 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', loadAboutStories);
+        // Load hero image
+        async function loadHeroImage() {
+            try {
+                const response = await fetch('/tables/page_hero_images');
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const aboutHero = data.data.find(item => item.page_name === 'about');
+                    if (aboutHero) {
+                        const heroElement = document.querySelector('.about-hero');
+                        heroElement.style.backgroundImage = `url('${aboutHero.image_url}')`;
+                        
+                        if (aboutHero.title) {
+                            document.querySelector('.about-hero h1').textContent = aboutHero.title;
+                        }
+                        if (aboutHero.subtitle) {
+                            document.querySelector('.about-hero p').textContent = aboutHero.subtitle;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading hero image:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeroImage();
+            loadAboutStories();
+        });
     </script>
 </body>
 </html>
