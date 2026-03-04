@@ -5,6 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ABOUT US - JJ WORLD</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .about-hero {
+            text-align: center;
+            padding: 100px 20px 80px;
+            background: linear-gradient(135deg, #2c2855 0%, #4a4178 100%);
+            color: white;
+            margin-top: 70px;
+        }
+        
+        .about-hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .about-hero p {
+            font-size: 20px;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .about-section {
+            padding: 100px 20px;
+            display: flex;
+            gap: 80px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .about-section:nth-child(even) {
+            flex-direction: row-reverse;
+            background: #f9f9f9;
+        }
+        
+        .about-section-image {
+            flex: 1;
+            min-width: 400px;
+        }
+        
+        .about-section-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .about-section-content {
+            flex: 1;
+            min-width: 400px;
+        }
+        
+        .about-section-content h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c2855;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .about-section-content p {
+            font-size: 16px;
+            line-height: 2;
+            color: #666;
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+        
+        @media (max-width: 968px) {
+            .about-hero h1 {
+                font-size: 36px;
+            }
+            
+            .about-hero p {
+                font-size: 18px;
+            }
+            
+            .about-section {
+                flex-direction: column !important;
+                gap: 40px;
+                padding: 60px 20px;
+            }
+            
+            .about-section-image,
+            .about-section-content {
+                min-width: 100%;
+            }
+            
+            .about-section-content h2 {
+                font-size: 24px;
+            }
+            
+            .about-section-content p {
+                font-size: 15px;
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -29,14 +136,14 @@
         </div>
     </header>
 
-    <main id="content" style="margin-top: 70px; padding: 80px 20px;">
-        <div class="container">
-            <h2 class="section-title">ABOUT US</h2>
-            <p class="section-subtitle">JJ WORLD의 이야기를 만나보세요</p>
-            
-            <div id="aboutStories" style="display: flex; flex-direction: column; gap: 60px; margin-top: 60px;">
-                <!-- Dynamic content loaded here -->
-            </div>
+    <main id="content">
+        <div class="about-hero">
+            <h1>Rise your beauty life</h1>
+            <p>아름다움이 당신의 삶을 바꿉니다</p>
+        </div>
+        
+        <div id="aboutStories" class="loading">
+            로딩 중...
         </div>
     </main>
 
@@ -61,19 +168,22 @@
                 const container = document.getElementById('aboutStories');
                 
                 if (data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(story => `
-                        <div style="display: flex; flex-direction: column; gap: 30px;">
-                            <img src="${story.image_url}" alt="Story" style="width: 100%; max-width: 800px; margin: 0 auto; border-radius: 10px;">
-                            <div style="max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 16px; color: #666;">
-                                ${story.content.replace(/\n/g, '<br>')}
+                    container.innerHTML = data.data.map((story, index) => `
+                        <div class="about-section">
+                            <div class="about-section-image">
+                                <img src="${story.image_url}" alt="JJ WORLD Story ${index + 1}">
+                            </div>
+                            <div class="about-section-content">
+                                <p>${story.content}</p>
                             </div>
                         </div>
                     `).join('');
                 } else {
-                    container.innerHTML = '<p style="text-align: center; color: #999;">준비 중입니다.</p>';
+                    container.innerHTML = '<div class="loading">준비 중입니다.</div>';
                 }
             } catch (error) {
                 console.error('Error loading about stories:', error);
+                container.innerHTML = '<div class="loading">콘텐츠를 불러오는데 실패했습니다.</div>';
             }
         }
         
