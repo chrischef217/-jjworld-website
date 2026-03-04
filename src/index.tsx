@@ -4,6 +4,7 @@ import { sign, verify } from 'hono/jwt'
 import type { JwtVariables } from 'hono/jwt'
 
 type Bindings = {
+  DB: D1Database;
   R2: R2Bucket;
   ASSETS: Fetcher;
   JWT_SECRET?: string;
@@ -105,6 +106,181 @@ const jwtAuth = async (c: any, next: any) => {
     return c.json({ error: 'Invalid or expired token' }, 401)
   }
 }
+
+// ========================================
+// Table API Endpoints (D1 Database)
+// ========================================
+
+// Generate unique ID
+function generateId() {
+  return `${Date.now()}-${Math.random().toString(36).substring(7)}`
+}
+
+// GET /tables/:table - List records
+app.get('/tables/:table', async (c) => {
+  try {
+    const table = c.req.param('table')
+    const limit = c.req.query('limit') || '100'
+    const sort = c.req.query('sort') || ''
+    
+    // Validate table name
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    if (!allowedTables.includes(table)) {
+      return c.json({ error: 'Invalid table name' }, 400)
+    }
+    
+    let query = `SELECT * FROM ${table}`
+    
+    // Handle sorting
+    if (sort) {
+      const isDescending = sort.startsWith('-')
+      const sortField = isDescending ? sort.substring(1) : sort
+      const direction = isDescending ? 'DESC' : 'ASC'
+      
+      // For 'order' field, use quotes
+      const field = sortField === 'order' ? '"order"' : sortField
+      query += ` ORDER BY ${field} ${direction}`
+    }
+    
+    query += ` LIMIT ${parseInt(limit)}`
+    
+    const result = await c.env.DB.prepare(query).all()
+    
+    return c.json({
+      success: true,
+      data: result.results || []
+    })
+  } catch (error) {
+    console.error('Table list error:', error)
+    return c.json({ error: 'Failed to fetch records' }, 500)
+  }
+})
+
+// GET /tables/:table/:id - Get single record
+app.get('/tables/:table/:id', async (c) => {
+  try {
+    const table = c.req.param('table')
+    const id = c.req.param('id')
+    
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    if (!allowedTables.includes(table)) {
+      return c.json({ error: 'Invalid table name' }, 400)
+    }
+    
+    const result = await c.env.DB.prepare(
+      `SELECT * FROM ${table} WHERE id = ?`
+    ).bind(id).first()
+    
+    if (!result) {
+      return c.notFound()
+    }
+    
+    return c.json(result)
+  } catch (error) {
+    console.error('Table get error:', error)
+    return c.json({ error: 'Failed to fetch record' }, 500)
+  }
+})
+
+// POST /tables/:table - Create record
+app.post('/tables/:table', async (c) => {
+  try {
+    const table = c.req.param('table')
+    const data = await c.req.json()
+    
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    if (!allowedTables.includes(table)) {
+      return c.json({ error: 'Invalid table name' }, 400)
+    }
+    
+    // Generate ID
+    const id = generateId()
+    data.id = id
+    
+    // Build INSERT query
+    const columns = Object.keys(data)
+    const placeholders = columns.map(() => '?').join(', ')
+    const values = Object.values(data)
+    
+    // Handle special column names with quotes
+    const columnList = columns.map(col => 
+      col === 'order' ? '"order"' : col
+    ).join(', ')
+    
+    await c.env.DB.prepare(
+      `INSERT INTO ${table} (${columnList}) VALUES (${placeholders})`
+    ).bind(...values).run()
+    
+    return c.json({
+      success: true,
+      id,
+      data
+    })
+  } catch (error) {
+    console.error('Table create error:', error)
+    return c.json({ error: 'Failed to create record' }, 500)
+  }
+})
+
+// PUT /tables/:table/:id - Update record
+app.put('/tables/:table/:id', async (c) => {
+  try {
+    const table = c.req.param('table')
+    const id = c.req.param('id')
+    const data = await c.req.json()
+    
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    if (!allowedTables.includes(table)) {
+      return c.json({ error: 'Invalid table name' }, 400)
+    }
+    
+    // Remove id from data
+    delete data.id
+    
+    // Build UPDATE query
+    const updates = Object.keys(data).map(key => 
+      key === 'order' ? '"order" = ?' : `${key} = ?`
+    ).join(', ')
+    const values = [...Object.values(data), id]
+    
+    await c.env.DB.prepare(
+      `UPDATE ${table} SET ${updates} WHERE id = ?`
+    ).bind(...values).run()
+    
+    return c.json({
+      success: true,
+      id,
+      data
+    })
+  } catch (error) {
+    console.error('Table update error:', error)
+    return c.json({ error: 'Failed to update record' }, 500)
+  }
+})
+
+// DELETE /tables/:table/:id - Delete record
+app.delete('/tables/:table/:id', async (c) => {
+  try {
+    const table = c.req.param('table')
+    const id = c.req.param('id')
+    
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    if (!allowedTables.includes(table)) {
+      return c.json({ error: 'Invalid table name' }, 400)
+    }
+    
+    await c.env.DB.prepare(
+      `DELETE FROM ${table} WHERE id = ?`
+    ).bind(id).run()
+    
+    return c.json({
+      success: true
+    })
+  } catch (error) {
+    console.error('Table delete error:', error)
+    return c.json({ error: 'Failed to delete record' }, 500)
+  }
+})
 
 // ========================================
 // Image Optimization Helper

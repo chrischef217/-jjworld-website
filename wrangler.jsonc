@@ -5,6 +5,14 @@
   "pages_build_output_dir": "./dist",
   "compatibility_flags": ["nodejs_compat"],
   
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "jjworld-db",
+      "database_id": "ccf2108e-c32d-4a82-b383-1d4afbf2334e"
+    }
+  ],
+  
   "r2_buckets": [
     {
       "binding": "R2",
