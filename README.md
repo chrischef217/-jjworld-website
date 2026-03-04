@@ -12,11 +12,14 @@
 
 ## 🌐 URL
 
+- **프로덕션**: https://fd3f7509.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai/admin
+- **관리자 페이지**: https://fd3f7509.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
+
+**⚠️ 중요**: 파일 업로드 기능을 사용하려면 Cloudflare 대시보드에서 R2 버킷을 생성하고 바인딩해야 합니다. (DEPLOYMENT_GUIDE.md 참조)
 
 ---
 
