@@ -124,7 +124,7 @@ app.get('/tables/:table', async (c) => {
     const sort = c.req.query('sort') || ''
     
     // Validate table name
-    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story', 'page_hero_images']
     if (!allowedTables.includes(table)) {
       return c.json({ error: 'Invalid table name' }, 400)
     }
@@ -162,7 +162,7 @@ app.get('/tables/:table/:id', async (c) => {
     const table = c.req.param('table')
     const id = c.req.param('id')
     
-    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story', 'page_hero_images']
     if (!allowedTables.includes(table)) {
       return c.json({ error: 'Invalid table name' }, 400)
     }
@@ -188,7 +188,7 @@ app.post('/tables/:table', async (c) => {
     const table = c.req.param('table')
     const data = await c.req.json()
     
-    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story', 'page_hero_images']
     if (!allowedTables.includes(table)) {
       return c.json({ error: 'Invalid table name' }, 400)
     }
@@ -229,7 +229,7 @@ app.put('/tables/:table/:id', async (c) => {
     const id = c.req.param('id')
     const data = await c.req.json()
     
-    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story', 'page_hero_images']
     if (!allowedTables.includes(table)) {
       return c.json({ error: 'Invalid table name' }, 400)
     }
@@ -264,7 +264,7 @@ app.delete('/tables/:table/:id', async (c) => {
     const table = c.req.param('table')
     const id = c.req.param('id')
     
-    const allowedTables = ['hero_content', 'brands', 'news', 'about_story']
+    const allowedTables = ['hero_content', 'brands', 'news', 'about_story', 'page_hero_images']
     if (!allowedTables.includes(table)) {
       return c.json({ error: 'Invalid table name' }, 400)
     }
