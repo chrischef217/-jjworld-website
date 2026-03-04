@@ -12,9 +12,9 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://aa2ee00f.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://cc66b8d7.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://aa2ee00f.jjworld.pages.dev/admin
+- **관리자 페이지**: https://cc66b8d7.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
@@ -25,9 +25,11 @@
 - localStorage 확인: `localStorage.getItem('admin_jwt_token')`
 
 **✅ 최근 업데이트**:
+- ✅ 히어로 텍스트 스타일 대폭 개선 (beautyrise.biz 스타일 적용)
+  - 제목: 굵은 세리프 폰트 (Georgia), 큰 사이즈 (36-72px)
+  - 부제목: 깔끔한 고딕 폰트, 적절한 투명도
+- ✅ 모든 페이지에 히어로 섹션 추가 (PR, CONTACT, FAQ)
 - ✅ 페이지 히어로 관리 UI 개선 (모던 카드 스타일 버튼, 아이콘 추가)
-- ✅ 페이지별 히어로 이미지 탭 (ABOUT US, BRANDS, PR, CONTACT, FAQ)
-- ✅ 로그인 디버깅 로그 추가
 - ✅ 모든 페이지에 히어로 이미지 추가 (관리자 페이지에서 수정 가능)
 - ✅ ABOUT US 페이지에 서브메뉴 추가 (기업 스토리, 기업 연혁, CI, 사업 현황)
 - ✅ ABOUT US 페이지 리디자인 (beautyrise.biz 스타일 적용)
