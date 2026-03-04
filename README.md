@@ -12,9 +12,9 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://4b643fcb.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://d0f0fbf0.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://4b643fcb.jjworld.pages.dev/admin
+- **관리자 페이지**: https://d0f0fbf0.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
@@ -25,13 +25,10 @@
 - localStorage 확인: `localStorage.getItem('admin_jwt_token')`
 
 **✅ 최근 업데이트**:
-- ✅ **AI 생성 히어로 이미지** 적용
-  - 모든 페이지에 전문적인 뷰티 스파 컨셉 이미지 적용
-  - ABOUT: 모던 미니멀 스파 인테리어
-  - BRANDS: 럭셔리 제품 디스플레이
-  - PR: 프로페셔널 프레스 이벤트
-  - CONTACT: 모던 오피스 리셉션
-  - FAQ: 편안한 컨설팅 룸
+- ✅ **히어로 이미지 문제 해결** (Unsplash 고품질 이미지 적용)
+  - 메인 히어로 콘텐츠 추가
+  - 모든 페이지 히어로에 전문 이미지 적용
+  - CORS 문제 해결 (브라우저에서 정상 로드)
 - ✅ **다중 히어로 슬라이드쇼** 기능 추가 (빠른 페이드 전환)
 - ✅ 모든 페이지에 히어로 이미지 추가 (관리자 페이지에서 수정 가능)
 - ✅ ABOUT US 페이지에 서브메뉴 추가 (기업 스토리, 기업 연혁, CI, 사업 현황)
