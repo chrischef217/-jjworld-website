@@ -24,33 +24,108 @@ mobileNav.addEventListener('click', (e) => {
 // ========================================
 // Load Hero Content from Database
 // ========================================
+let heroItems = [];
+let currentHeroIndex = 0;
+
 async function loadHeroContent() {
     try {
-        const response = await fetch('tables/hero_content?limit=1');
+        const response = await fetch('tables/hero_content?limit=100');
         const data = await response.json();
         
         if (data.data && data.data.length > 0) {
-            const hero = data.data.find(item => item.is_active) || data.data[0];
-            const heroMedia = document.getElementById('heroMedia');
-            const heroTitle = document.getElementById('heroTitle');
-            const heroSubtitle = document.getElementById('heroSubtitle');
+            // Filter only active hero items and sort by id or order
+            heroItems = data.data.filter(item => item.is_active);
             
-            // Set media (video or image)
-            if (hero.media_type === 'video') {
-                heroMedia.innerHTML = `<video autoplay loop muted playsinline>
-                    <source src="${hero.media_url}" type="video/mp4">
-                </video>`;
-            } else {
-                heroMedia.innerHTML = `<img src="${hero.media_url}" alt="Hero Image">`;
+            if (heroItems.length === 0) {
+                heroItems = [data.data[0]]; // Fallback to first item if no active items
             }
             
-            // Set text content
-            if (heroTitle) heroTitle.textContent = hero.title;
-            if (heroSubtitle) heroSubtitle.textContent = hero.subtitle;
+            // Initialize first hero
+            renderHeroItem(0);
+            
+            // Start slideshow if there are multiple items
+            if (heroItems.length > 1) {
+                startHeroSlideshow();
+            }
         }
     } catch (error) {
         console.error('Error loading hero content:', error);
     }
+}
+
+function renderHeroItem(index) {
+    const hero = heroItems[index];
+    const heroMedia = document.getElementById('heroMedia');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroSubtitle = document.getElementById('heroSubtitle');
+    
+    if (!heroMedia) return;
+    
+    // Create new media element
+    const newMediaElement = document.createElement('div');
+    newMediaElement.className = 'hero-media-item';
+    newMediaElement.style.opacity = '0';
+    newMediaElement.style.transition = 'opacity 0.8s ease-in-out';
+    newMediaElement.style.position = 'absolute';
+    newMediaElement.style.top = '0';
+    newMediaElement.style.left = '0';
+    newMediaElement.style.width = '100%';
+    newMediaElement.style.height = '100%';
+    
+    // Set media (video or image)
+    if (hero.media_type === 'video') {
+        newMediaElement.innerHTML = `<video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+            <source src="${hero.media_url}" type="video/mp4">
+        </video>`;
+    } else {
+        newMediaElement.innerHTML = `<img src="${hero.media_url}" alt="Hero Image" style="width: 100%; height: 100%; object-fit: cover;">`;
+    }
+    
+    // Get current media element
+    const currentMediaElement = heroMedia.querySelector('.hero-media-item');
+    
+    // Add new element to DOM
+    heroMedia.appendChild(newMediaElement);
+    
+    // Trigger fade in after a brief delay
+    setTimeout(() => {
+        newMediaElement.style.opacity = '1';
+    }, 50);
+    
+    // Fade out and remove old element
+    if (currentMediaElement) {
+        currentMediaElement.style.opacity = '0';
+        setTimeout(() => {
+            if (currentMediaElement.parentNode) {
+                currentMediaElement.remove();
+            }
+        }, 800); // Match transition duration
+    }
+    
+    // Update text content with fade effect
+    if (heroTitle) {
+        heroTitle.style.opacity = '0';
+        setTimeout(() => {
+            heroTitle.textContent = hero.title;
+            heroTitle.style.opacity = '1';
+        }, 400);
+    }
+    
+    if (heroSubtitle) {
+        heroSubtitle.style.opacity = '0';
+        setTimeout(() => {
+            heroSubtitle.textContent = hero.subtitle;
+            heroSubtitle.style.opacity = '1';
+        }, 400);
+    }
+}
+
+function startHeroSlideshow() {
+    // Change hero every 4 seconds (fast transition)
+    setInterval(() => {
+        currentHeroIndex = (currentHeroIndex + 1) % heroItems.length;
+        renderHeroItem(currentHeroIndex);
+    }, 4000); // 4 seconds per slide
 }
 
 // ========================================
