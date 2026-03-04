@@ -12,9 +12,9 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://b94db3a8.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://4b643fcb.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://b94db3a8.jjworld.pages.dev/admin
+- **관리자 페이지**: https://4b643fcb.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
