@@ -62,17 +62,43 @@ function initAdminAccess() {
         }
     });
 
-    adminPasswordForm.addEventListener('submit', (e) => {
+    adminPasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const password = adminPassword.value;
+        const submitBtn = adminPasswordForm.querySelector('button[type="submit"]');
         
-        if (password === '1111') {
+        // Disable button during request
+        submitBtn.disabled = true;
+        submitBtn.textContent = '인증 중...';
+        
+        try {
+            // Call JWT login API
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
+            });
+            
+            if (!response.ok) {
+                throw new Error('비밀번호가 올바르지 않습니다.');
+            }
+            
+            const data = await response.json();
+            
+            // Save JWT token to localStorage
+            localStorage.setItem('admin_jwt_token', data.token);
+            
+            // Redirect to admin page
             window.location.href = 'admin.html';
-        } else {
-            errorMessage.textContent = '⚠️ 비밀번호가 올바르지 않습니다.';
+        } catch (error) {
+            errorMessage.textContent = '⚠️ ' + error.message;
             errorMessage.style.display = 'block';
             adminPassword.value = '';
             adminPassword.focus();
+            submitBtn.disabled = false;
+            submitBtn.textContent = '접속';
         }
     });
 
