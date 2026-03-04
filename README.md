@@ -12,15 +12,17 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://0ffe8494.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://5e244aed.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://0ffe8494.jjworld.pages.dev/admin
+- **관리자 페이지**: https://5e244aed.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
 
-**✅ JWT 인증 수정 완료**: 관리자 페이지 로그인 401 오류가 해결되었습니다!
-**✅ R2 파일 업로드 활성화**: 이제 관리자 페이지에서 이미지/비디오를 직접 업로드할 수 있습니다!
+**✅ 주요 수정 완료**:
+- JWT 인증 수정 완료 (관리자 페이지 로그인 401 오류 해결)
+- D1 데이터베이스 통합 완료 (Table API 정상 작동)
+- R2 파일 업로드 활성화 (이미지/비디오 직접 업로드 가능)
 
 ---
 
