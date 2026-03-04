@@ -86,11 +86,14 @@ function createFileUploadUI(inputId, previewId) {
         try {
             const url = await uploadFile(file);
             
+            // Convert relative URL to absolute URL
+            const absoluteUrl = url.startsWith('http') ? url : window.location.origin + url;
+            
             // Set the URL in the main input
             const mainInput = document.getElementById(inputId);
-            mainInput.value = url;
+            mainInput.value = absoluteUrl;
             
-            // Show preview
+            // Show preview (use relative URL for preview to avoid CORS issues)
             if (file.type.startsWith('image/')) {
                 preview.innerHTML = `<img src="${url}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px;">`;
             } else if (file.type.startsWith('video/')) {
