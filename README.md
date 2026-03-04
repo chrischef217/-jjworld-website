@@ -12,14 +12,20 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://44f3a228.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://a9539f8c.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://44f3a228.jjworld.pages.dev/admin
+- **관리자 페이지**: https://a9539f8c.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
 
+**⚠️ 로그인 문제 발생 시**:
+- 브라우저 캐시 삭제 후 재시도
+- 개발자 도구(F12) 콘솔에서 에러 로그 확인
+- localStorage 확인: `localStorage.getItem('admin_jwt_token')`
+
 **✅ 최근 업데이트**:
+- ✅ 로그인 디버깅 로그 추가
 - ✅ 모든 페이지에 히어로 이미지 추가 (관리자 페이지에서 수정 가능)
 - ✅ ABOUT US 페이지에 서브메뉴 추가 (기업 스토리, 기업 연혁, CI, 사업 현황)
 - ✅ ABOUT US 페이지 리디자인 (beautyrise.biz 스타일 적용)
