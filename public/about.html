@@ -8,7 +8,7 @@
     <style>
         .about-hero {
             text-align: center;
-            padding: 100px 20px 80px;
+            padding: 100px 20px 40px;
             background: linear-gradient(135deg, #2c2855 0%, #4a4178 100%);
             color: white;
             margin-top: 70px;
@@ -28,6 +28,56 @@
             max-width: 600px;
             margin: 0 auto;
             line-height: 1.6;
+        }
+        
+        /* Submenu styles */
+        .about-submenu {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 0;
+            margin-top: 40px;
+        }
+        
+        .about-submenu-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 0;
+        }
+        
+        .about-submenu-item {
+            flex: 1;
+            max-width: 250px;
+            text-align: center;
+            padding: 20px 30px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-size: 16px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .about-submenu-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .about-submenu-item.active {
+            color: white;
+            border-bottom-color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Content sections */
+        .about-content {
+            display: none;
+        }
+        
+        .about-content.active {
+            display: block;
         }
         
         .about-section {
@@ -86,6 +136,17 @@
                 font-size: 18px;
             }
             
+            .about-submenu-container {
+                flex-wrap: wrap;
+            }
+            
+            .about-submenu-item {
+                flex: 1 1 50%;
+                max-width: none;
+                padding: 15px 20px;
+                font-size: 14px;
+            }
+            
             .about-section {
                 flex-direction: column !important;
                 gap: 40px;
@@ -107,6 +168,12 @@
         }
         
         .loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+        }
+        
+        .placeholder-content {
             text-align: center;
             padding: 100px 20px;
             color: #999;
@@ -140,10 +207,44 @@
         <div class="about-hero">
             <h1>Rise your beauty life</h1>
             <p>아름다움이 당신의 삶을 바꿉니다</p>
+            
+            <!-- Submenu -->
+            <div class="about-submenu">
+                <div class="about-submenu-container">
+                    <div class="about-submenu-item active" data-tab="story">기업 스토리</div>
+                    <div class="about-submenu-item" data-tab="history">기업 연혁</div>
+                    <div class="about-submenu-item" data-tab="ci">CI</div>
+                    <div class="about-submenu-item" data-tab="business">사업 현황</div>
+                </div>
+            </div>
         </div>
         
-        <div id="aboutStories" class="loading">
-            로딩 중...
+        <!-- Content sections -->
+        <div id="storyContent" class="about-content active">
+            <div id="aboutStories" class="loading">
+                로딩 중...
+            </div>
+        </div>
+        
+        <div id="historyContent" class="about-content">
+            <div class="placeholder-content">
+                <h2>기업 연혁</h2>
+                <p>준비 중입니다.</p>
+            </div>
+        </div>
+        
+        <div id="ciContent" class="about-content">
+            <div class="placeholder-content">
+                <h2>CI</h2>
+                <p>준비 중입니다.</p>
+            </div>
+        </div>
+        
+        <div id="businessContent" class="about-content">
+            <div class="placeholder-content">
+                <h2>사업 현황</h2>
+                <p>준비 중입니다.</p>
+            </div>
         </div>
     </main>
 
@@ -161,6 +262,26 @@
     <script src="js/main.js"></script>
     <script src="js/admin-access.js"></script>
     <script>
+        // Tab switching
+        document.querySelectorAll('.about-submenu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                
+                // Update active tab
+                document.querySelectorAll('.about-submenu-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                item.classList.add('active');
+                
+                // Update active content
+                document.querySelectorAll('.about-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                document.getElementById(tab + 'Content').classList.add('active');
+            });
+        });
+        
+        // Load about stories
         async function loadAboutStories() {
             try {
                 const response = await fetch('tables/about_story?sort=order');
