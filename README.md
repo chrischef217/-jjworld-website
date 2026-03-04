@@ -12,14 +12,15 @@
 
 ## 🌐 URL
 
-- **프로덕션**: https://004a92c2.jjworld.pages.dev (Cloudflare Pages)
+- **프로덕션**: https://728949df.jjworld.pages.dev (Cloudflare Pages)
 - **개발 서버**: https://3000-il1efjrh4yudo0th2456c-02b9cc79.sandbox.novita.ai
-- **관리자 페이지**: https://004a92c2.jjworld.pages.dev/admin
+- **관리자 페이지**: https://728949df.jjworld.pages.dev/admin
 - **GitHub**: https://github.com/chrischef217/-jjworld-website
 
 **관리자 비밀번호**: `1111`
 
 **✅ 최근 업데이트**:
+- ✅ ABOUT US 페이지에 서브메뉴 추가 (기업 스토리, 기업 연혁, CI, 사업 현황)
 - ✅ ABOUT US 페이지 리디자인 (beautyrise.biz 스타일 적용)
 - ✅ JWT 인증 수정 완료 (관리자 페이지 로그인 401 오류 해결)
 - ✅ 이중 로그인 문제 해결 (한 번만 로그인하면 됩니다!)
