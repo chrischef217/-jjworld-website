@@ -329,16 +329,22 @@ button {
 }
 
 .hero-title {
-    font-size: clamp(32px, 5vw, 64px);
-    font-weight: 300;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .hero-subtitle {
-    font-size: clamp(16px, 2.5vw, 24px);
+    font-size: clamp(16px, 2vw, 22px);
     font-weight: 300;
-    opacity: 0.9;
+    opacity: 0.95;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
 }
 
 .scroll-indicator {
