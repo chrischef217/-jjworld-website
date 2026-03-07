@@ -583,7 +583,20 @@ if (heroPageForm) {
     }
     
     async function handlePageHeroFileUpload(file) {
+        // Show uploading status
+        pageHeroMediaPreviewContainer.innerHTML = `
+            <div style="text-align: center; padding: 20px; background: #f0f8ff; border-radius: 8px;">
+                <p style="margin: 0; color: #0066cc; font-size: 16px;">⏳ 업로드 중...</p>
+                <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">${file.name}</p>
+            </div>
+        `;
+        
         try {
+            // Check if uploadFile function exists
+            if (typeof uploadFile !== 'function') {
+                throw new Error('업로드 함수를 찾을 수 없습니다. file-upload.js가 로드되었는지 확인하세요.');
+            }
+            
             const uploadedUrl = await uploadFile(file);
             document.getElementById('pageHeroMediaUrl').value = uploadedUrl;
             
@@ -593,18 +606,24 @@ if (heroPageForm) {
                 pageHeroMediaType.value = isVideo ? 'video' : 'image';
             }
             
-            // Show preview
+            // Show success preview
             if (isVideo) {
                 pageHeroMediaPreviewContainer.innerHTML = `
-                    <video src="${uploadedUrl}" class="preview-image" controls style="max-width: 300px;">
-                        Your browser does not support video.
-                    </video>
-                    <p style="margin-top: 10px; color: #666; font-size: 14px;">✅ 비디오 업로드 완료</p>
+                    <div style="text-align: center;">
+                        <video src="${uploadedUrl}" class="preview-image" controls style="max-width: 300px; border-radius: 8px;">
+                            Your browser does not support video.
+                        </video>
+                        <p style="margin-top: 10px; color: #28a745; font-size: 14px; font-weight: 600;">✅ 비디오 업로드 완료</p>
+                        <p style="margin-top: 5px; color: #666; font-size: 12px;">${file.name}</p>
+                    </div>
                 `;
             } else {
                 pageHeroMediaPreviewContainer.innerHTML = `
-                    <img src="${uploadedUrl}" class="preview-image" alt="Uploaded preview">
-                    <p style="margin-top: 10px; color: #666; font-size: 14px;">✅ 이미지 업로드 완료</p>
+                    <div style="text-align: center;">
+                        <img src="${uploadedUrl}" class="preview-image" alt="Uploaded preview" style="max-width: 300px; border-radius: 8px;">
+                        <p style="margin-top: 10px; color: #28a745; font-size: 14px; font-weight: 600;">✅ 이미지 업로드 완료</p>
+                        <p style="margin-top: 5px; color: #666; font-size: 12px;">${file.name}</p>
+                    </div>
                 `;
             }
             
@@ -613,6 +632,13 @@ if (heroPageForm) {
             
             showAlert(isVideo ? '비디오가 업로드되었습니다.' : '이미지가 업로드되었습니다.');
         } catch (error) {
+            console.error('Upload error:', error);
+            pageHeroMediaPreviewContainer.innerHTML = `
+                <div style="padding: 20px; background: #fff3f3; border: 1px solid #ffcccc; border-radius: 8px;">
+                    <p style="margin: 0; color: #dc3545; font-size: 14px; font-weight: 600;">❌ 업로드 실패</p>
+                    <p style="margin: 10px 0 0 0; color: #666; font-size: 13px;">${error.message}</p>
+                </div>
+            `;
             showAlert('업로드 실패: ' + error.message, 'error');
         }
     }
