@@ -456,6 +456,14 @@ async function loadPageHeroData(pageName) {
             document.getElementById('pageHeroTitle').value = pageHero.title || '';
             document.getElementById('pageHeroSubtitle').value = pageHero.subtitle || '';
             
+            // Show existing image preview
+            const pageHeroImagePreviewContainer = document.getElementById('pageHeroImagePreviewContainer');
+            if (pageHero.image_url && pageHeroImagePreviewContainer) {
+                pageHeroImagePreviewContainer.innerHTML = `
+                    <img src="${pageHero.image_url}" class="preview-image" alt="Current hero image">
+                `;
+            }
+            
             // Update preview
             updatePageHeroPreview();
         }
@@ -494,6 +502,66 @@ document.addEventListener('DOMContentLoaded', () => {
 // Page hero form submission
 const heroPageForm = document.getElementById('heroPageForm');
 if (heroPageForm) {
+    // Setup file upload for page hero
+    const pageHeroUploadArea = document.getElementById('pageHeroUploadArea');
+    const pageHeroImageFile = document.getElementById('pageHeroImageFile');
+    const pageHeroImagePreviewContainer = document.getElementById('pageHeroImagePreviewContainer');
+    
+    if (pageHeroUploadArea && pageHeroImageFile) {
+        // Click to upload
+        pageHeroUploadArea.addEventListener('click', () => {
+            pageHeroImageFile.click();
+        });
+        
+        // File input change
+        pageHeroImageFile.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                await handlePageHeroFileUpload(file);
+            }
+        });
+        
+        // Drag and drop
+        pageHeroUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            pageHeroUploadArea.classList.add('dragover');
+        });
+        
+        pageHeroUploadArea.addEventListener('dragleave', () => {
+            pageHeroUploadArea.classList.remove('dragover');
+        });
+        
+        pageHeroUploadArea.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            pageHeroUploadArea.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                await handlePageHeroFileUpload(file);
+            }
+        });
+    }
+    
+    async function handlePageHeroFileUpload(file) {
+        try {
+            const uploadedUrl = await uploadFile(file);
+            document.getElementById('pageHeroImageUrl').value = uploadedUrl;
+            
+            // Show preview
+            pageHeroImagePreviewContainer.innerHTML = `
+                <img src="${uploadedUrl}" class="preview-image" alt="Uploaded preview">
+                <p style="margin-top: 10px; color: #666; font-size: 14px;">✅ 업로드 완료</p>
+            `;
+            
+            // Update hero preview
+            updatePageHeroPreview();
+            
+            showAlert('이미지가 업로드되었습니다.');
+        } catch (error) {
+            showAlert('업로드 실패: ' + error.message, 'error');
+        }
+    }
+    
     heroPageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -501,6 +569,11 @@ if (heroPageForm) {
         const imageUrl = document.getElementById('pageHeroImageUrl').value;
         const title = document.getElementById('pageHeroTitle').value;
         const subtitle = document.getElementById('pageHeroSubtitle').value;
+        
+        if (!imageUrl) {
+            showAlert('이미지를 업로드해주세요.', 'error');
+            return;
+        }
         
         try {
             if (currentPageHeroData.id) {
