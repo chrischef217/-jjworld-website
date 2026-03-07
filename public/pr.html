@@ -83,8 +83,8 @@
 
     <main id="content" style="padding: 80px 20px;">
         <div class="container">
-            <h2 class="section-title">PR</h2>
-            <p class="section-subtitle">JJ WORLD의 최신 소식을 만나보세요</p>
+            <h2 class="section-title scroll-animate">PR</h2>
+            <p class="section-subtitle scroll-animate delay-1">JJ WORLD의 최신 소식을 만나보세요</p>
             
             <div id="newsContainer" class="news-grid" style="margin-top: 60px;">
                 <!-- Dynamic content loaded here -->
@@ -113,10 +113,10 @@
                 const container = document.getElementById('newsContainer');
                 
                 if (data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(item => {
+                    container.innerHTML = data.data.map((item, index) => {
                         const date = new Date(item.date).toLocaleDateString('ko-KR');
                         return `
-                            <div class="news-card">
+                            <div class="news-card scroll-animate-scale delay-${Math.min(index + 1, 4)}">
                                 <img src="${item.image_url}" alt="${item.title}">
                                 <div class="news-card-content">
                                     <h3>${item.title}</h3>
@@ -126,6 +126,13 @@
                             </div>
                         `;
                     }).join('');
+                    
+                    // Trigger animation after content loaded
+                    setTimeout(() => {
+                        container.querySelectorAll('.scroll-animate-scale').forEach((el) => {
+                            el.classList.add('animated');
+                        });
+                    }, 100);
                 }
             } catch (error) {
                 console.error('Error loading news:', error);

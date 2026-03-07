@@ -145,8 +145,8 @@
                 const container = document.getElementById('brandsContainer');
                 
                 if (data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(brand => `
-                        <div class="news-card">
+                    container.innerHTML = data.data.map((brand, index) => `
+                        <div class="news-card scroll-animate-scale delay-${Math.min(index + 1, 4)}">
                             <img src="${brand.image_url}" alt="${brand.name}">
                             <div class="news-card-content">
                                 <h3>${brand.name}</h3>
@@ -154,6 +154,13 @@
                             </div>
                         </div>
                     `).join('');
+                    
+                    // Trigger animation after content loaded
+                    setTimeout(() => {
+                        container.querySelectorAll('.scroll-animate-scale').forEach((el) => {
+                            el.classList.add('animated');
+                        });
+                    }, 100);
                 } else {
                     container.innerHTML = '<p style="text-align: center; color: #999;">준비 중입니다.</p>';
                 }
