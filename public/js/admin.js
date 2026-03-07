@@ -452,16 +452,31 @@ async function loadPageHeroData(pageName) {
             
             // Fill form
             document.getElementById('currentPageName').value = pageName;
-            document.getElementById('pageHeroImageUrl').value = pageHero.image_url || '';
+            document.getElementById('pageHeroMediaUrl').value = pageHero.image_url || '';
             document.getElementById('pageHeroTitle').value = pageHero.title || '';
             document.getElementById('pageHeroSubtitle').value = pageHero.subtitle || '';
             
-            // Show existing image preview
-            const pageHeroImagePreviewContainer = document.getElementById('pageHeroImagePreviewContainer');
-            if (pageHero.image_url && pageHeroImagePreviewContainer) {
-                pageHeroImagePreviewContainer.innerHTML = `
-                    <img src="${pageHero.image_url}" class="preview-image" alt="Current hero image">
-                `;
+            // Set media type (default to image if not specified)
+            const mediaType = pageHero.media_type || 'image';
+            const mediaTypeSelect = document.getElementById('pageHeroMediaType');
+            if (mediaTypeSelect) {
+                mediaTypeSelect.value = mediaType;
+            }
+            
+            // Show existing media preview
+            const pageHeroMediaPreviewContainer = document.getElementById('pageHeroMediaPreviewContainer');
+            if (pageHero.image_url && pageHeroMediaPreviewContainer) {
+                if (mediaType === 'video') {
+                    pageHeroMediaPreviewContainer.innerHTML = `
+                        <video src="${pageHero.image_url}" class="preview-image" controls style="max-width: 300px;">
+                            Your browser does not support video.
+                        </video>
+                    `;
+                } else {
+                    pageHeroMediaPreviewContainer.innerHTML = `
+                        <img src="${pageHero.image_url}" class="preview-image" alt="Current hero image">
+                    `;
+                }
             }
             
             // Update preview
@@ -473,12 +488,24 @@ async function loadPageHeroData(pageName) {
 }
 
 function updatePageHeroPreview() {
-    const imageUrl = document.getElementById('pageHeroImageUrl').value;
+    const mediaUrl = document.getElementById('pageHeroMediaUrl').value;
     const title = document.getElementById('pageHeroTitle').value;
     const subtitle = document.getElementById('pageHeroSubtitle').value;
     
     const preview = document.getElementById('pageHeroPreview');
     const previewTitle = document.getElementById('previewTitle');
+    const previewSubtitle = document.getElementById('previewSubtitle');
+    
+    if (preview && mediaUrl) {
+        preview.style.backgroundImage = `url('${mediaUrl}')`;
+    }
+    if (previewTitle) {
+        previewTitle.textContent = title || 'ABOUT US';
+    }
+    if (previewSubtitle) {
+        previewSubtitle.textContent = subtitle || 'JJ WORLD를 소개합니다';
+    }
+}
     const previewSubtitle = document.getElementById('previewSubtitle');
     
     if (imageUrl) {
@@ -504,17 +531,30 @@ const heroPageForm = document.getElementById('heroPageForm');
 if (heroPageForm) {
     // Setup file upload for page hero
     const pageHeroUploadArea = document.getElementById('pageHeroUploadArea');
-    const pageHeroImageFile = document.getElementById('pageHeroImageFile');
-    const pageHeroImagePreviewContainer = document.getElementById('pageHeroImagePreviewContainer');
+    const pageHeroMediaFile = document.getElementById('pageHeroMediaFile');
+    const pageHeroMediaPreviewContainer = document.getElementById('pageHeroMediaPreviewContainer');
+    const pageHeroMediaType = document.getElementById('pageHeroMediaType');
     
-    if (pageHeroUploadArea && pageHeroImageFile) {
+    if (pageHeroUploadArea && pageHeroMediaFile) {
+        // Update file accept based on media type
+        if (pageHeroMediaType) {
+            pageHeroMediaType.addEventListener('change', () => {
+                const type = pageHeroMediaType.value;
+                if (type === 'image') {
+                    pageHeroMediaFile.accept = 'image/*';
+                } else if (type === 'video') {
+                    pageHeroMediaFile.accept = 'video/*';
+                }
+            });
+        }
+        
         // Click to upload
         pageHeroUploadArea.addEventListener('click', () => {
-            pageHeroImageFile.click();
+            pageHeroMediaFile.click();
         });
         
         // File input change
-        pageHeroImageFile.addEventListener('change', async (e) => {
+        pageHeroMediaFile.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
                 await handlePageHeroFileUpload(file);
@@ -536,7 +576,7 @@ if (heroPageForm) {
             pageHeroUploadArea.classList.remove('dragover');
             
             const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
+            if (file && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
                 await handlePageHeroFileUpload(file);
             }
         });
@@ -545,18 +585,33 @@ if (heroPageForm) {
     async function handlePageHeroFileUpload(file) {
         try {
             const uploadedUrl = await uploadFile(file);
-            document.getElementById('pageHeroImageUrl').value = uploadedUrl;
+            document.getElementById('pageHeroMediaUrl').value = uploadedUrl;
+            
+            // Auto-detect media type
+            const isVideo = file.type.startsWith('video/');
+            if (pageHeroMediaType) {
+                pageHeroMediaType.value = isVideo ? 'video' : 'image';
+            }
             
             // Show preview
-            pageHeroImagePreviewContainer.innerHTML = `
-                <img src="${uploadedUrl}" class="preview-image" alt="Uploaded preview">
-                <p style="margin-top: 10px; color: #666; font-size: 14px;">✅ 업로드 완료</p>
-            `;
+            if (isVideo) {
+                pageHeroMediaPreviewContainer.innerHTML = `
+                    <video src="${uploadedUrl}" class="preview-image" controls style="max-width: 300px;">
+                        Your browser does not support video.
+                    </video>
+                    <p style="margin-top: 10px; color: #666; font-size: 14px;">✅ 비디오 업로드 완료</p>
+                `;
+            } else {
+                pageHeroMediaPreviewContainer.innerHTML = `
+                    <img src="${uploadedUrl}" class="preview-image" alt="Uploaded preview">
+                    <p style="margin-top: 10px; color: #666; font-size: 14px;">✅ 이미지 업로드 완료</p>
+                `;
+            }
             
             // Update hero preview
             updatePageHeroPreview();
             
-            showAlert('이미지가 업로드되었습니다.');
+            showAlert(isVideo ? '비디오가 업로드되었습니다.' : '이미지가 업로드되었습니다.');
         } catch (error) {
             showAlert('업로드 실패: ' + error.message, 'error');
         }
@@ -566,19 +621,21 @@ if (heroPageForm) {
         e.preventDefault();
         
         const pageName = document.getElementById('currentPageName').value;
-        const imageUrl = document.getElementById('pageHeroImageUrl').value;
+        const mediaUrl = document.getElementById('pageHeroMediaUrl').value;
+        const mediaType = document.getElementById('pageHeroMediaType').value;
         const title = document.getElementById('pageHeroTitle').value;
         const subtitle = document.getElementById('pageHeroSubtitle').value;
         
-        if (!imageUrl) {
-            showAlert('이미지를 업로드해주세요.', 'error');
+        if (!mediaUrl) {
+            showAlert('미디어 파일을 업로드해주세요.', 'error');
             return;
         }
         
         try {
             if (currentPageHeroData.id) {
                 await updateRecord('page_hero_images', currentPageHeroData.id, {
-                    image_url: imageUrl,
+                    image_url: mediaUrl,
+                    media_type: mediaType,
                     title: title,
                     subtitle: subtitle
                 });

@@ -527,16 +527,24 @@
             <div id="pageHeroForm">
                 <form id="heroPageForm">
                     <input type="hidden" id="currentPageName" value="about">
-                    <input type="hidden" id="pageHeroImageUrl">
+                    <input type="hidden" id="pageHeroMediaUrl">
                     
                     <div class="form-group">
-                        <label>히어로 이미지 업로드</label>
+                        <label>미디어 타입</label>
+                        <select id="pageHeroMediaType" required>
+                            <option value="image">이미지</option>
+                            <option value="video">비디오</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>미디어 파일 업로드 (이미지 또는 비디오)</label>
                         <div class="file-upload-area" id="pageHeroUploadArea">
-                            <input type="file" id="pageHeroImageFile" accept="image/*" style="display: none;">
-                            <p>📁 클릭하거나 드래그하여 이미지 업로드</p>
-                            <small style="color: #999;">지원 형식: JPG, PNG, GIF</small>
+                            <input type="file" id="pageHeroMediaFile" accept="image/*,video/*" style="display: none;">
+                            <p>📁 클릭하거나 드래그하여 파일 업로드</p>
+                            <small style="color: #999;">이미지: JPG, PNG, GIF | 비디오: MP4, WebM</small>
                         </div>
-                        <div id="pageHeroImagePreviewContainer" style="margin-top: 15px;"></div>
+                        <div id="pageHeroMediaPreviewContainer" style="margin-top: 15px;"></div>
                     </div>
                     
                     <div class="form-group">
