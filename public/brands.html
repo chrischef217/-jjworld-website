@@ -155,12 +155,10 @@
                         </div>
                     `).join('');
                     
-                    // Trigger animation after content loaded
-                    setTimeout(() => {
-                        container.querySelectorAll('.scroll-animate-scale').forEach((el) => {
-                            el.classList.add('animated');
-                        });
-                    }, 100);
+                    // Re-initialize scroll animation observer for new elements
+                    if (window.initScrollAnimations) {
+                        window.initScrollAnimations();
+                    }
                 } else {
                     container.innerHTML = '<p style="text-align: center; color: #999;">준비 중입니다.</p>';
                 }

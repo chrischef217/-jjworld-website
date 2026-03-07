@@ -127,12 +127,10 @@
                         `;
                     }).join('');
                     
-                    // Trigger animation after content loaded
-                    setTimeout(() => {
-                        container.querySelectorAll('.scroll-animate-scale').forEach((el) => {
-                            el.classList.add('animated');
-                        });
-                    }, 100);
+                    // Re-initialize scroll animation observer for new elements
+                    if (window.initScrollAnimations) {
+                        window.initScrollAnimations();
+                    }
                 }
             } catch (error) {
                 console.error('Error loading news:', error);
