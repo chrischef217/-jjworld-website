@@ -302,9 +302,9 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>미디어 URL (이미지 또는 비디오)</label>
-                    <input type="url" id="heroMediaUrl" placeholder="https://example.com/image.jpg" required>
-                    <small>* 외부 URL을 입력하세요 (Unsplash, YouTube 등)</small>
+                    <label>미디어 파일 (이미지 또는 비디오)</label>
+                    <input type="hidden" id="heroMediaUrl">
+                    <small>* 아래 파일 업로드 영역을 사용하세요</small>
                 </div>
                 <div class="form-group">
                     <label>제목</label>
@@ -341,8 +341,9 @@
                     <input type="text" id="brandName" placeholder="PREMIUM LINE" required>
                 </div>
                 <div class="form-group">
-                    <label>이미지 URL</label>
-                    <input type="url" id="brandImage" placeholder="https://example.com/brand.jpg" required>
+                    <label>이미지 파일</label>
+                    <input type="hidden" id="brandImage">
+                    <small>* 아래 파일 업로드 영역을 사용하세요</small>
                 </div>
                 <div class="form-group">
                     <label>설명</label>
@@ -379,8 +380,9 @@
                     <input type="text" id="newsTitle" placeholder="뉴스 제목" required>
                 </div>
                 <div class="form-group">
-                    <label>썸네일 이미지 URL</label>
-                    <input type="url" id="newsImage" placeholder="https://example.com/news.jpg" required>
+                    <label>썸네일 이미지 파일</label>
+                    <input type="hidden" id="newsImage">
+                    <small>* 아래 파일 업로드 영역을 사용하세요</small>
                 </div>
                 <div class="form-group">
                     <label>내용</label>
@@ -412,8 +414,9 @@
             <h2 class="section-title">About 스토리 관리</h2>
             <form id="aboutForm">
                 <div class="form-group">
-                    <label>이미지 URL</label>
-                    <input type="url" id="aboutImage" placeholder="https://example.com/story.jpg" required>
+                    <label>이미지 파일</label>
+                    <input type="hidden" id="aboutImage">
+                    <small>* 아래 파일 업로드 영역을 사용하세요</small>
                 </div>
                 <div class="form-group">
                     <label>스토리 내용</label>
