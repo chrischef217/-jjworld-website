@@ -1,0 +1,72 @@
+name: JJ PURE POC QA
+
+on:
+  pull_request:
+    paths:
+      - 'public/jj-pure-poc.html'
+      - 'public/css/jj-pure-poc.css'
+      - 'public/js/jj-pure-poc.js'
+      - 'tests/jj-pure-poc.spec.mjs'
+      - '.github/workflows/jj-pure-poc-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install project dependencies
+        run: npm ci
+
+      - name: Static syntax check
+        run: node --check public/js/jj-pure-poc.js
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright test runner
+        run: |
+          npm install --no-save @playwright/test@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start built site
+        run: |
+          npx vite preview --host 127.0.0.1 --port 4173 > /tmp/jj-pure-vite.log 2>&1 &
+          echo $! > /tmp/jj-pure-vite.pid
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:4173/jj-pure-poc.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/jj-pure-vite.log
+          exit 1
+
+      - name: Browser motion QA
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: http://127.0.0.1:4173
+        run: npx playwright test tests/jj-pure-poc.spec.mjs --reporter=line
+
+      - name: Upload visual checkpoints
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jj-pure-poc-visual-checkpoints
+          path: |
+            test-results/**/*.png
+            playwright-report/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Print preview server log on failure
+        if: failure()
+        run: cat /tmp/jj-pure-vite.log || true
