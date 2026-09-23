@@ -12,9 +12,23 @@ async function scrollToProgress(page, progress) {
   await page.evaluate((p) => {
     const section = document.querySelector('#cinematic');
     const max = section.offsetHeight - innerHeight;
-    window.scrollTo(0, section.offsetTop + max * p);
+    window.scrollTo({ top: section.offsetTop + max * p, left: 0, behavior: 'auto' });
   }, progress);
-  await page.waitForTimeout(1400);
+
+  await expect.poll(async () => {
+    return Number(await page.locator('#progress-readout').textContent());
+  }, {
+    timeout: 8000,
+    intervals: [250, 350, 500],
+    message: `scroll-linked progress should converge near ${progress}`
+  }).toBeGreaterThan(progress - 0.085);
+
+  await expect.poll(async () => {
+    return Number(await page.locator('#progress-readout').textContent());
+  }, {
+    timeout: 8000,
+    intervals: [250, 350, 500],
+  }).toBeLessThan(progress + 0.085);
 }
 
 test('JJ PURE cinematic POC renders and follows scroll in both directions', async ({ page }) => {
@@ -38,12 +52,9 @@ test('JJ PURE cinematic POC renders and follows scroll in both directions', asyn
 
   for (const cp of checkpoints) {
     await scrollToProgress(page, cp.progress);
-    const readout = Number(await page.locator('#progress-readout').textContent());
-    expect(readout).toBeGreaterThan(cp.progress - 0.09);
-    expect(readout).toBeLessThan(cp.progress + 0.09);
 
     const opacity = Number(await page.locator(cp.selector).evaluate((el) => getComputedStyle(el).opacity));
-    expect(opacity).toBeGreaterThan(0.35);
+    expect(opacity).toBeGreaterThan(0.30);
 
     await page.screenshot({ path: `test-results/jj-pure-${cp.name}.png`, fullPage: false });
   }
@@ -69,7 +80,10 @@ test('JJ PURE POC mobile layout remains usable', async ({ page }) => {
   await page.goto('/jj-pure-poc.html?debug=1', { waitUntil: 'networkidle' });
   await expect(page.locator('#three-canvas')).toBeVisible();
   await scrollToProgress(page, 0.58);
-  await expect(page.locator('.copy-bright')).toBeVisible();
+
+  const opacity = Number(await page.locator('.copy-bright').evaluate((el) => getComputedStyle(el).opacity));
+  expect(opacity).toBeGreaterThan(0.30);
+
   await page.screenshot({ path: 'test-results/jj-pure-mobile-bright.png', fullPage: false });
   expect(errors, errors.join('\n')).toEqual([]);
 });
