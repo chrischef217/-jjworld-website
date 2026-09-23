@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.setTimeout(120_000);
+test.setTimeout(90_000);
 
 const checkpoints = [
   { name: 'calm', progress: 0.16, selector: '.copy-calm' },
@@ -10,7 +10,7 @@ const checkpoints = [
   { name: 'cream', progress: 0.94, selector: '.copy-cream' },
 ];
 
-async function scrollToProgress(page, progress) {
+async function scrollToProgress(page, progress, tolerance = 0.035) {
   await page.evaluate((p) => {
     const section = document.querySelector('#cinematic');
     const max = section.offsetHeight - innerHeight;
@@ -20,20 +20,24 @@ async function scrollToProgress(page, progress) {
   await expect.poll(async () => {
     return Number(await page.locator('#progress-readout').textContent());
   }, {
-    timeout: 10_000,
-    intervals: [250, 350, 500],
+    timeout: 6000,
+    intervals: [150, 250, 350],
     message: `scroll-linked progress should converge near ${progress}`
-  }).toBeGreaterThan(progress - 0.085);
+  }).toBeGreaterThan(progress - tolerance);
 
   await expect.poll(async () => {
     return Number(await page.locator('#progress-readout').textContent());
   }, {
-    timeout: 10_000,
-    intervals: [250, 350, 500],
-  }).toBeLessThan(progress + 0.085);
+    timeout: 6000,
+    intervals: [150, 250, 350],
+  }).toBeLessThan(progress + tolerance);
 }
 
-test('JJ PURE cinematic POC renders and follows scroll in both directions', async ({ page }) => {
+test('scene mapping renders all five product checkpoints deterministically', async ({ page }) => {
+  // Reduced-motion mode removes Lenis inertia so the test validates exact
+  // ScrollTrigger scene mapping independently of smooth-scroll timing.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
   const errors = [];
   page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`));
   page.on('console', (msg) => {
@@ -41,9 +45,7 @@ test('JJ PURE cinematic POC renders and follows scroll in both directions', asyn
   });
 
   await page.goto('/jj-pure-poc.html?debug=1', { waitUntil: 'networkidle' });
-
-  const canvas = page.locator('#three-canvas');
-  await expect(canvas).toBeVisible();
+  await expect(page.locator('#three-canvas')).toBeVisible();
   await expect(page.locator('#progress-readout')).toBeVisible();
 
   const webgl = await page.evaluate(() => {
@@ -54,26 +56,47 @@ test('JJ PURE cinematic POC renders and follows scroll in both directions', asyn
 
   for (const cp of checkpoints) {
     await scrollToProgress(page, cp.progress);
-
-    await expect.poll(async () => {
-      return Number(await page.locator(cp.selector).evaluate((el) => getComputedStyle(el).opacity));
-    }, { timeout: 6000 }).toBeGreaterThan(0.30);
-
+    const opacity = Number(await page.locator(cp.selector).evaluate((el) => getComputedStyle(el).opacity));
+    expect(opacity, `${cp.name} copy should be visually active`).toBeGreaterThan(0.30);
     await page.screenshot({ path: `test-results/jj-pure-${cp.name}.png`, fullPage: false });
   }
 
   await scrollToProgress(page, 0.18);
   const reversed = Number(await page.locator('#progress-readout').textContent());
-  expect(reversed).toBeLessThan(0.30);
+  expect(reversed).toBeLessThan(0.23);
+  expect(errors, errors.join('\n')).toEqual([]);
+});
 
-  const fpsText = await page.locator('#fps-readout').textContent();
-  console.log(`debug fps snapshot: ${fpsText}`);
+test('Lenis smooth-scroll transport changes scene progress and reverses', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`));
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') errors.push(`console: ${msg.text()}`);
+  });
+
+  await page.goto('/jj-pure-poc.html?debug=1', { waitUntil: 'networkidle' });
+  const start = Number(await page.locator('#progress-readout').textContent());
+
+  await page.mouse.wheel(0, 2800);
+  await expect.poll(async () => Number(await page.locator('#progress-readout').textContent()), {
+    timeout: 7000,
+    intervals: [250, 350, 500],
+  }).toBeGreaterThan(start + 0.01);
+
+  const forward = Number(await page.locator('#progress-readout').textContent());
+  await page.mouse.wheel(0, -2200);
+  await expect.poll(async () => Number(await page.locator('#progress-readout').textContent()), {
+    timeout: 7000,
+    intervals: [250, 350, 500],
+  }).toBeLessThan(forward - 0.005);
 
   expect(errors, errors.join('\n')).toEqual([]);
 });
 
-test('JJ PURE POC mobile layout remains usable', async ({ page }) => {
+test('mobile fallback preserves the BRIGHT scene without browser errors', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+
   const errors = [];
   page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`));
   page.on('console', (msg) => {
@@ -84,10 +107,8 @@ test('JJ PURE POC mobile layout remains usable', async ({ page }) => {
   await expect(page.locator('#three-canvas')).toBeVisible();
   await scrollToProgress(page, 0.58);
 
-  await expect.poll(async () => {
-    return Number(await page.locator('.copy-bright').evaluate((el) => getComputedStyle(el).opacity));
-  }, { timeout: 6000 }).toBeGreaterThan(0.30);
-
+  const opacity = Number(await page.locator('.copy-bright').evaluate((el) => getComputedStyle(el).opacity));
+  expect(opacity).toBeGreaterThan(0.30);
   await page.screenshot({ path: 'test-results/jj-pure-mobile-bright.png', fullPage: false });
   expect(errors, errors.join('\n')).toEqual([]);
 });
