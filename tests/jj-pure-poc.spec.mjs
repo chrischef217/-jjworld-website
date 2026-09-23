@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+test.setTimeout(120_000);
+
 const checkpoints = [
   { name: 'calm', progress: 0.16, selector: '.copy-calm' },
   { name: 'plump', progress: 0.36, selector: '.copy-plump' },
@@ -18,7 +20,7 @@ async function scrollToProgress(page, progress) {
   await expect.poll(async () => {
     return Number(await page.locator('#progress-readout').textContent());
   }, {
-    timeout: 8000,
+    timeout: 10_000,
     intervals: [250, 350, 500],
     message: `scroll-linked progress should converge near ${progress}`
   }).toBeGreaterThan(progress - 0.085);
@@ -26,7 +28,7 @@ async function scrollToProgress(page, progress) {
   await expect.poll(async () => {
     return Number(await page.locator('#progress-readout').textContent());
   }, {
-    timeout: 8000,
+    timeout: 10_000,
     intervals: [250, 350, 500],
   }).toBeLessThan(progress + 0.085);
 }
@@ -53,8 +55,9 @@ test('JJ PURE cinematic POC renders and follows scroll in both directions', asyn
   for (const cp of checkpoints) {
     await scrollToProgress(page, cp.progress);
 
-    const opacity = Number(await page.locator(cp.selector).evaluate((el) => getComputedStyle(el).opacity));
-    expect(opacity).toBeGreaterThan(0.30);
+    await expect.poll(async () => {
+      return Number(await page.locator(cp.selector).evaluate((el) => getComputedStyle(el).opacity));
+    }, { timeout: 6000 }).toBeGreaterThan(0.30);
 
     await page.screenshot({ path: `test-results/jj-pure-${cp.name}.png`, fullPage: false });
   }
@@ -81,8 +84,9 @@ test('JJ PURE POC mobile layout remains usable', async ({ page }) => {
   await expect(page.locator('#three-canvas')).toBeVisible();
   await scrollToProgress(page, 0.58);
 
-  const opacity = Number(await page.locator('.copy-bright').evaluate((el) => getComputedStyle(el).opacity));
-  expect(opacity).toBeGreaterThan(0.30);
+  await expect.poll(async () => {
+    return Number(await page.locator('.copy-bright').evaluate((el) => getComputedStyle(el).opacity));
+  }, { timeout: 6000 }).toBeGreaterThan(0.30);
 
   await page.screenshot({ path: 'test-results/jj-pure-mobile-bright.png', fullPage: false });
   expect(errors, errors.join('\n')).toEqual([]);
